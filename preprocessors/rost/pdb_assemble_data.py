@@ -48,7 +48,34 @@ class AssembleData(object):
                     dssp = line[colon_index + 1:].strip()
                     proteins[protein].append(dssp)
 
-    def output_proteins(object, proteins):
+    # h -> h
+    # g -> h
+    # i -> h
+    # e -> e
+    # b -> _
+    # t -> _
+    # s -> _
+    def clean_classifications(self, proteins):
+        for protein in proteins:
+            orig_classification = proteins[protein]
+            clean_classification = ""
+            for letter in range(len(orig_classification)):
+                if orig_classification[letter] == 'G' or\
+                        orig_classification[letter] == 'I' or\
+                        orig_classification[letter] == 'H':
+                    clean_classification += 'h'
+                elif orig_classification[letter] == 'E':
+                    clean_classification += 'e'
+                elif orig_classification[letter] == 'B' or\
+                        orig_classification[letter] == 'T' or\
+                        orig_classification[letter] == 'S':
+                    clean_classification += '_'
+            if len(clean_classification) != len(orig_classification):
+                print "Classification translation did not come out right!!"
+            proteins[protein] = clean_classification
+#            return proteins
+
+    def output_proteins(self, proteins):
         output = open("protein_data", "w")
         for protein in proteins:
             output.write("%s %s %s\n" % (protein, proteins[protein][0], proteins[protein][1]))
@@ -68,6 +95,6 @@ if __name__ == '__main__':
     ad = AssembleData(sys.argv[1], sys.argv[2])
     proteins = ad.get_protein_list()
     ad.get_data(proteins)
+    ad.clean_classifications(proteins)
     ad.print_proteins(proteins)
     ad.output_proteins(proteins)
-
