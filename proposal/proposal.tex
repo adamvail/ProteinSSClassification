@@ -1,0 +1,43 @@
+\documentclass[]{article}
+%\usepackage{verbatim}
+%\usepackage[dvips]{graphicx}
+%\usepackage{pslatex}
+\title{Classifying Protein Secondary Structures through Deep Network Learning}
+\author{Stephanie deWet and Adam Vail}
+
+\begin{document}
+\maketitle
+
+\section{Goals}
+The goal of our project is to classify protein structures through the use of deep networks.
+Specifically, we are going to attempt to map each amino acid in the protein to its secondary structure.
+Protein classification based upon amino acid sequence is an open problem that is well known in machine learning.
+Other learning methods have been applied in the past such as k-nearest neighbor, traditional neural networks (single hidden layer), and support vector machines.
+With the recent popularity of deep networks, we hope to discover their level of ability to correctly classify protein structures compared with the more conventional learning algorithms.
+If time permits, we hope to use a sequential labeling model such as hidden Markov models or conditional random fields to process the output of the deep network model.
+
+\section{Algorithms}
+As mentioned above, we plan to apply deep networks to the problem of protein classification.
+We plan on doing this through the use of autoencoders.
+Our hope is that the multiple levels of autoencoders will discover comprehensible internal structures that combine to make up the secodary structures.
+
+\section{Experiments}
+We plan to format the problem as predicting the secondary structure of an amino acid, given a window of amino acids around it.
+We will try solving the problem using both a traditional neural net with back propagation and a deep network with autoencoders.
+Our goal is to compare the two methods, and see whether deep networks provide a benefit over the traditional neural networks.
+
+\section{Datasets}
+We plan to use the 130 non-redundant proteins selected in \cite{Rost}, because they have already been selected intelligently.
+We will use the CATH database to get the amino acid sequence for proteins, because it has a clean and convenient API to get this sequence, and
+the Database of Secondary Structure in Proteins (DSSP) to provide the correct secondary structure for our training data. 
+
+\begin{thebibliography}{9}
+
+\bibitem{Rost}
+Burkhard Rost and Christ Sander,
+  `` Prediction of Protein Secondary Structures at Bettter than 70\% Accuracy"
+  in \emph{J. Mol. Bio.}, 1993.
+
+\end{thebibliography}
+
+\end{document}
