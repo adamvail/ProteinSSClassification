@@ -1,0 +1,4 @@
+# Compilation artifacts for latex
+*.aux
+*.pdf
+*.log
