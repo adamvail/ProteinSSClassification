@@ -1,4 +1,0 @@
-ProteinSSClassification
-=======================
-
-ProteinSSClassification
