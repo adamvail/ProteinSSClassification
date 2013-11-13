@@ -9,14 +9,61 @@ import java.util.ArrayList;
 public class CrossValidation {
 	
 	public static ArrayList<ProteinDataSet> processData(int degree, String filename){		
-		return crossValidation(readData(filename));
+		return crossValidation(degree, readData(filename));
 	}
 	
-	private static ArrayList<ProteinDataSet> crossValidation(ArrayList<Protein> proteins){
+	private static ArrayList<ProteinDataSet> crossValidation(int degree, ArrayList<Protein> proteins){
 		
-		// TODO actually chop up the data to accomplish cross validation
+		ArrayList<ProteinDataSet> fullDataSet = new ArrayList<ProteinDataSet>();
+		ArrayList<ArrayList<Protein>> chunks = new ArrayList<ArrayList<Protein>>();
+		int group_size;
+		int remainder = proteins.size() % degree;
+		int group_index = 1;
 		
-		return null;
+		if(remainder == 0){
+			group_size = proteins.size() / degree;
+		}
+		else {
+			group_size = proteins.size() / (degree - 1);
+		}
+		
+		// make sure the last group isn't going to be too small
+		if((group_size - remainder) > 0){
+			// There is room to give every group one less so that
+			// the final group will have a closer number to all other groups
+			group_size = group_size - ((group_size - remainder) / degree);
+		}
+		
+		// Chunk the data into separate sets
+		for(int i = 1; i <= proteins.size(); i++){
+			if(chunks.size() < group_index){
+				chunks.add(new ArrayList<Protein>());
+			}
+			
+			chunks.get(group_index - 1).add(proteins.get(i - 1));
+			
+			if(i % group_size == 0){
+				group_index++;
+				if(group_index > degree + 1){
+					System.out.println("Too many chunks: " + group_index);
+				}
+			}
+		}
+		
+		// Create the separate groups for the cross validation
+		for(int i = 0; i < degree; i++){
+			ProteinDataSet currDataSet = new ProteinDataSet();
+			for(int k = 0; k < chunks.size(); k++){
+				if(k == i){
+					currDataSet.addProteinListToTest(chunks.get(k));
+				}
+				else {
+					currDataSet.addProteinListToTrain(chunks.get(k));
+				}
+			}
+			fullDataSet.add(currDataSet);
+		}
+		return fullDataSet;
 	}
 	
 	private static ArrayList<Protein> readData(String filename){
