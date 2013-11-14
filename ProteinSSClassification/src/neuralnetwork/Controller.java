@@ -1,33 +1,86 @@
 package neuralnetwork;
 
+import java.util.ArrayList;
 import java.util.Collection;
-import java.util.HashMap;
-import java.util.Vector;
+
+import dataprocessing.ProteinDataSet;
 
 public class Controller {
 
-	private Collection<Collection<Unit>> allUnits;
+	// handle to our network
+	private ArrayList<ArrayList<Unit>> allUnits = new ArrayList<ArrayList<Unit>>();
+	
+	private ArrayList<InputUnit> inputs;
+	int windowSize;
+	final int aminoAcidLibrary = 20;
 
 	// Input is size of each layer of units.  Ex: 17 5 3
-	public Controller(ArrayList<int> size){
-		for(int i = 0; i < size.size(); i++) {
-			Collection<Unit> layer = new Collection<Units>();
-			for (int j = 0; j < size.get(i); j++) { 
-				if (i < size.size() - 1) {
-					layer.add(new Unit(false));
+	public Controller(ArrayList<Integer> layerSize, int windowSize){
+		this.windowSize = windowSize;
+		
+		initializeNeuralNetwork(layerSize);
+		
+	}
+	
+	public ArrayList<ArrayList<Unit>> getNetwork(){
+		return allUnits;
+	}
+	
+	public void initializeNeuralNetwork(ArrayList<Integer> layerSize){
+		// initialize the units array list
+		for(int i = 0; i < layerSize.size(); i++){
+			allUnits.add(new ArrayList<Unit>());
+		}
+		
+		createInputs();
+		
+		for(int i = 0; i < layerSize.size(); i++) {
+			for (int j = 0; j < layerSize.get(i); j++) { 
+				if (i < layerSize.size() - 1) {
+					allUnits.get(i).add(new Unit(false));
 				}
 				else {
-					layer.add(new Unit(true));
+					allUnits.get(i).add(new Unit(true));
 				}
 			}
-			allUnits.add(layer);
 		}
-
-		// Need to set up connections
+		
+		connectGraph();
+	}
+	
+	private void connectGraph(){
+		
+		// connect all the inputs.
+		for(int i = 0; i < allUnits.size() - 1; i++){
+			for(Unit u : allUnits.get(i+1)){
+				u.addAllInput(allUnits.get(i));
+			}
+		}
+		
+		// set the outputs
+		for(int i = allUnits.size() - 1; i > 0; i--){
+			for(Unit out : allUnits.get(i)){
+				for(Unit in : out.getInputs().keySet()){
+					in.addOutput(out, out.getInputs().get(in));
+				}
+			}
+		}
+	}
+	
+	public void createInputs() {
+		for(int i = 0; i < windowSize; i++){
+			inputs.add(new InputUnit(aminoAcidLibrary));
+		}
+		
+		for(InputUnit u : inputs){
+			allUnits.get(0).addAll(u.getInputSubUnits());
+		}
 	}
 
 	// Train network on a piece of data
-	public void trainOnInstance(ArrayList<double> x, y) {
+	public void trainOnInstance(String sequence, STRUCTURE structure) {
+		// set inputs to correct value
+		// loop through layers
 		if (x.size() != inputs.size()) {
 			// Error
 			System.out.println("Error in training instances");
@@ -54,5 +107,9 @@ public class Controller {
 			}
 		}
 
+	}
+	
+	public enum STRUCTURE {
+		ALPHA, BETA, LOOP
 	}
 }

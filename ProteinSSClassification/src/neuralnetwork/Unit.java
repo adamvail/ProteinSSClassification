@@ -2,19 +2,17 @@ package neuralnetwork;
 
 import java.util.Collection;
 import java.util.HashMap;
-import java.util.Vector;
+import java.util.Map;
 
 public class Unit {
 
-	private HashMap<Unit, Double> inputs;
+	private HashMap<Unit, Double> inputs = new HashMap<Unit, Double>();
 	double value;
-	private HashMap<Unit, Double> outputs;
+	private HashMap<Unit, Double> outputs = new HashMap<Unit, Double>();
 	private boolean outputUnit = false;
 	private double error;
 	
 	public Unit(boolean outputUnit){
-		inputs = new HashMap<Unit, Double>();
-		outputs = new HashMap<Unit, Double>();
 		this.outputUnit = outputUnit;
 	}
 
@@ -25,7 +23,7 @@ public class Unit {
 	}
 	
 	// Use this constructor for hidden units
-	public Unit(Collection<Unit> inputs, Collection<Unit> outputs, boolean outputUnit){
+	public Unit(Collection<Unit> inputs, Map<Unit, Double> outputs, boolean outputUnit){
 		addAllInput(inputs);
 		addAllOutput(outputs);
 		this.outputUnit = outputUnit;
@@ -71,11 +69,10 @@ public class Unit {
 		this.outputs.put(output, randomWeight);
 	}
 	
-	public void addAllOutput(Collection<Unit> outputs){
-		for(Unit u : outputs){
+	public void addAllOutput(Map<Unit, Double> outputs){
+		for(Unit u : outputs.keySet()){
 			// get a random double between -1 and 1
-			double randomWeight = (Math.random() * 2) - 1;
-			this.outputs.put(u, randomWeight);
+			this.outputs.put(u, outputs.get(u));
 		}
 	}
 	
