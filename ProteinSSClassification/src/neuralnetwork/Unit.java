@@ -17,9 +17,17 @@ public class Unit {
 		outputs = new HashMap<Unit, Double>();
 		this.outputUnit = outputUnit;
 	}
-	
+
+	// Use this constructor for output units
 	public Unit(Collection<Unit> inputs, boolean outputUnit){
 		addAllInput(inputs);
+		this.outputUnit = outputUnit;
+	}
+	
+	// Use this constructor for hidden units
+	public Unit(Collection<Unit> inputs, Collection<Unit> outputs, boolean outputUnit){
+		addAllInput(inputs);
+		addAllOutput(outputs);
 		this.outputUnit = outputUnit;
 	}
 	
@@ -50,6 +58,24 @@ public class Unit {
 			// get a random double between -1 and 1
 			double randomWeight = (Math.random() * 2) - 1;
 			this.inputs.put(u, randomWeight);
+		}
+	}
+	
+	public void addOutput(Unit output, double weight){
+		outputs.put(output, weight);
+	}
+	
+	public void addOutput(Unit output){
+		// get a random double between -1 and 1
+		double randomWeight = (Math.random() * 2) - 1;
+		this.outputs.put(output, randomWeight);
+	}
+	
+	public void addAllOutput(Collection<Unit> outputs){
+		for(Unit u : outputs){
+			// get a random double between -1 and 1
+			double randomWeight = (Math.random() * 2) - 1;
+			this.outputs.put(u, randomWeight);
 		}
 	}
 	
