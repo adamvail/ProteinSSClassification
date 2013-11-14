@@ -1,3 +1,9 @@
-ProteinSSClassification/*.class
+# Ignore Java files
+*.class
 .metadata/*
 ProteinSSClassification/bin/*
+
+
+# Ignore text editor tmp files
+*~
+*.swp
