@@ -53,6 +53,10 @@ public class Unit {
 		}
 	}
 	
+	public void setValue(double value){
+		this.value = value;
+	}
+	
 	public HashMap<Unit, Double> getInputs(){
 		return inputs;
 	}
