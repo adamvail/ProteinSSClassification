@@ -12,6 +12,14 @@ public class ProteinDataSet {
 		this.test = new ArrayList<Protein>();
 	}
 	
+	public void addProteinListToTrain(ArrayList<Protein> proteins){
+		train.addAll(proteins);
+	}
+	
+	public void addProteinListToTest(ArrayList<Protein> proteins){
+		test.addAll(proteins);
+	}
+	
 	public void addProteinToTrain(Protein protein){
 		this.train.add(protein);
 	}
