@@ -37,28 +37,29 @@ public abstract class StochasticGradient {
 	 * @param y arraylist of training instances' class labels
 	 * @return weights input to unit.
 	 */
-	Double[] trainWeights(ArrayList<ArrayList<Double>x>, ArrayList<Double> y) {
+	public Double[] trainWeights(ArrayList<ArrayList<Double>> x, ArrayList<Double> y) {
 		// TODO: more intelligent stopping criteria
 		// TODO:  Allow weights to be initialized more rationally?
-		if (x.length <= 0) {
+		if (x.size() <= 0) {
 			System.out.println("No training instances!");
 			return null;
 		}
 		// Assume each training instance has same length.
-		Double[] w = new Double(x[0].length);
+		Double[] w = new Double[x.get(0).size()];
 		for (int i = 0; i < w.length; i++) {
 			w[i] = Math.random();
 		}
 
 		for (int k = 0; k < m; k++) {
-			for (int d = 0; d < x.length(); d++) {
-				double o = network(x[d].toArray(), w);
-				double err = error(o, y[d]);  // Use this for a better stopping criterion
-				Double[] grad_err = error_subgrad(o, y[d], x[d].toArray());
+			for (int d = 0; d < x.size(); d++) {
+				double o = network((Double[])x.get(d).toArray(), w);
+				double err = error(o, y.get(d));  // Use this for a better stopping criterion
+				Double[] grad_err = error_subgrad(o, y.get(d), (Double[])x.get(d).toArray());
 				for (int i = 0; i < w.length; i++) {
 					w[i] -= eta * grad_err[i];
 				}
 			}
 		}
+		return w;
 	}
 }

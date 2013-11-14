@@ -8,18 +8,22 @@ public class Unit {
 
 	private HashMap<Unit, Double> inputs;
 	double value;
-	private Vector<Unit> outputs;
+	private HashMap<Unit, Double> outputs;
+	private boolean outputUnit = false;
+	private double error;
 	
-	public Unit(){
+	public Unit(boolean outputUnit){
 		inputs = new HashMap<Unit, Double>();
-		outputs = new Vector<Unit>();
+		outputs = new HashMap<Unit, Double>();
+		this.outputUnit = outputUnit;
 	}
 	
-	public Unit(Collection<Unit> inputs){
+	public Unit(Collection<Unit> inputs, boolean outputUnit){
 		addAllInput(inputs);
+		this.outputUnit = outputUnit;
 	}
 	
-	public void calculateValue(){
+	public void calculateOutputValue(){
 		double inputSum = 0;
 		for(Unit in : inputs.keySet()){
 			inputSum += in.getValue() * inputs.get(in);
@@ -53,7 +57,7 @@ public class Unit {
 		return inputs;
 	}
 	
-	public Vector<Unit> getOutputs(){
+	public HashMap<Unit, Double> getOutputs(){
 		return outputs;
 	}
 	
@@ -61,4 +65,45 @@ public class Unit {
 		return value;
 	}
 	
+	public double getError() {
+		return error;
+	}
+	
+	public double getWeight(Unit u){
+		return inputs.get(u);
+	}
+	
+	private void calculateOutputUnitError(double y){
+		error = (y - value) * value * (1 - value);
+	}
+	
+	private void calculateHiddenUnitError(){
+		double outputError = 0;
+		for(Unit u : outputs.keySet()){
+			outputError += u.getError() * outputs.get(u);
+			outputs.put(u, u.getWeight(this));
+		}
+		
+		error = value * (1 - value) * outputError;
+	}
+	
+	private void changeWeights(double learningRate) {
+		for(Unit u : inputs.keySet()){
+			double weight = inputs.get(u) + (error * u.getValue() * learningRate);
+			inputs.put(u, weight);
+		}
+	}
+	
+	public void trainWeights(double y, double learningRate){
+		if(outputUnit){
+			// train weights as an output unit
+			calculateOutputUnitError(y);
+		}
+		else {
+			// train weights as a hidden unit
+			calculateHiddenUnitError();
+		}
+		
+		changeWeights(learningRate);
+	}
 }

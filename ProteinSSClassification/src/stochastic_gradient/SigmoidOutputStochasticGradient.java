@@ -1,5 +1,6 @@
 package stochastic_gradient;
-import java.lang.Math;
+
+import java.util.ArrayList;
 
 public class SigmoidOutputStochasticGradient extends StochasticGradient {
 
@@ -9,7 +10,7 @@ public class SigmoidOutputStochasticGradient extends StochasticGradient {
 	 * @return expected output of network unit
 	 */
 	public double network(Double[] x, Double[] w) {
-		if (x.length <= 0 || x.length != w.length)
+		if (x.length <= 0 || x.length != w.length) {
 			System.out.println("Error in network calculations!");
 			return -1;
 		}
@@ -25,7 +26,7 @@ public class SigmoidOutputStochasticGradient extends StochasticGradient {
 	 * @param y expected output for this unit
 	 * @return error for specific output unit
 	 */
-	double error(double o, double y) {
+	public double error(double o, double y) {
 		// Error = (1/2) * (y - o)^2
 		return 0.5 * (y - o) * (y - o);
 	}
@@ -35,14 +36,15 @@ public class SigmoidOutputStochasticGradient extends StochasticGradient {
 	 * @param y expected output for this unit
 	 * @return error gradient for specific output unit
 	 */
-	Double[] error_subgrad(double o, double y, Double[] x) {
-		if (x.length <= 0)
+	public Double[] error_subgrad(double o, double y, Double[] x) {
+		if (x.length <= 0) {
 			System.out.println("Error in error subgradient calculations!");
-			return -1;
+			return null;
 		}
-		Double[] grad = new Double(x.length);
+		Double[] grad = new Double[x.length];
+		
 		double prefix = (y - o) * o * (1 - o);
-		for (int i = 0; i < x.length, i++) {
+		for (int i = 0; i < x.length; i++) {
 			grad[i] = prefix * x[i];
 		}
 		return grad;
@@ -53,7 +55,7 @@ public class SigmoidOutputStochasticGradient extends StochasticGradient {
 	 * @param y arraylist of training instances' class labels
 	 * @return weights input to unit.
 	 */
-	Double[] trainWeights(ArrayList<ArrayList<Double> x>, ArrayList<Double> y) {
+	public Double[] trainWeights(ArrayList<ArrayList<Double>> x, ArrayList<Double> y) {
 		return trainWeights(x, y);
 	}
 }
