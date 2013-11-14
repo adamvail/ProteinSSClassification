@@ -3,8 +3,21 @@ import java.lang.Math;
 
 public class SigmoidOutputStochasticGradient extends StochasticGradient {
 
-	Double[] network(double x, double w) {
-		return -1;
+	/** Calculates output of specific unit  (assumes no constant inputs!)
+	 * @param x array of inputs to unit
+	 * @param w array of weights of unit
+	 * @return expected output of network unit
+	 */
+	double network(Double[] x, Double[] w) {
+		if (x.length <= 0 || x.length != w.length)
+			System.out.println("Error in network calculations!");
+			return -1;
+		}
+		double net = 0;
+		for (int i = 0; i < x.length; i++) {
+			net += x[i] * w[i];
+		}
+		return 1.0 / (1.0 + Math.exp(-1.0 * net));
 	}
 
 	/** Calculates error for a specific output unit.
@@ -38,8 +51,9 @@ public class SigmoidOutputStochasticGradient extends StochasticGradient {
 	/**  Trains the weights for one specific output unit
 	 * @param x arraylist of training instances, which contains an array of x values
 	 * @param y arraylist of training instances' class labels
+	 * @return weights input to unit.
 	 */
-	public trainWeights(ArrayList<ArrayList<Double> x>, ArrayList<Double> y) {
-		trainWeights(x, y);
+	Double[] trainWeights(ArrayList<ArrayList<Double> x>, ArrayList<Double> y) {
+		return trainWeights(x, y);
 	}
 }
