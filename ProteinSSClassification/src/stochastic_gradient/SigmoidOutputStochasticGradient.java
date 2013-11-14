@@ -8,7 +8,7 @@ public class SigmoidOutputStochasticGradient extends StochasticGradient {
 	 * @param w array of weights of unit
 	 * @return expected output of network unit
 	 */
-	double network(Double[] x, Double[] w) {
+	public double network(Double[] x, Double[] w) {
 		if (x.length <= 0 || x.length != w.length)
 			System.out.println("Error in network calculations!");
 			return -1;

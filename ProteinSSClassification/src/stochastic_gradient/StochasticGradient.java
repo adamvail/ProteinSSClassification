@@ -1,5 +1,6 @@
 package stochastic_gradient;
 import java.lang.Math;
+import java.util.ArrayList;
 
 public abstract class StochasticGradient {
 	double eta;  // Learning rate  (step size)
@@ -15,28 +16,28 @@ public abstract class StochasticGradient {
 	 * @param w array of weights of unit
 	 * @return expected output of network unit
 	 */
-	double abstract network(Double[] x, Double[] w);
+	public abstract double network(Double[] x, Double[] w);
 
 	/** Calculates error for a specific output unit.
 	 * @param o actual output of this unit
 	 * @param y expected output for this unit
 	 * @return error for specific output unit
 	 */
-	double abstract error(double o, double y);
+	public abstract double error(double o, double y);
 
 	/** Calculates error gradient for a specific output unit.
 	 * @param o actual output of this unit
 	 * @param y expected output for this unit
 	 * @return error gradient for specific output unit
 	 */
-	Double[] abstract error_subgrad(double o, double y, Double[] x);
+	public abstract Double[] error_subgrad(double o, double y, Double[] x);
 
 	/**  Trains the weights for one specific output unit
 	 * @param x arraylist of training instances, which contains an array of x values
 	 * @param y arraylist of training instances' class labels
 	 * @return weights input to unit.
 	 */
-	Double[] trainWeights(ArrayList<ArrayList<Double> x>, ArrayList<Double> y) {
+	Double[] trainWeights(ArrayList<ArrayList<Double>x>, ArrayList<Double> y) {
 		// TODO: more intelligent stopping criteria
 		// TODO:  Allow weights to be initialized more rationally?
 		if (x.length <= 0) {
