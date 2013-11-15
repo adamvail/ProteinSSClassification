@@ -4,6 +4,8 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 
+import neuralnetwork.Controller.STRUCTURE;
+
 public class Unit {
 
 	private HashMap<Unit, Double> inputs = new HashMap<Unit, Double>();
@@ -100,7 +102,7 @@ public class Unit {
 		return inputs.get(u);
 	}
 	
-	private void calculateOutputUnitError(double y){
+	private void calculateOutputUnitError(double y){		
 		error = (y - value) * value * (1 - value);
 	}
 	
@@ -121,7 +123,7 @@ public class Unit {
 		}
 	}
 	
-	public void trainWeights(double y, double learningRate){
+	public void trainWeights(Double y, double learningRate){
 		if(outputUnit){
 			// train weights as an output unit
 			calculateOutputUnitError(y);

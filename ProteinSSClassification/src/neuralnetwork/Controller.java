@@ -13,6 +13,7 @@ public class Controller {
 	private ArrayList<InputUnit> inputs;
 	int windowSize;
 	final int aminoAcidLibrary = 20;
+	final double LEARNING_RATE = .1;
 
 	// Input is size of each layer of units.  Ex: 17 5 3
 	public Controller(ArrayList<Integer> layerSize, int windowSize){
@@ -50,7 +51,7 @@ public class Controller {
 	
 	private void connectGraph(){
 		
-		// connect all the inputs.
+		// connect all the inputs. Yields initial wedge weights
 		for(int i = 0; i < allUnits.size() - 1; i++){
 			for(Unit u : allUnits.get(i+1)){
 				u.addAllInput(allUnits.get(i));
@@ -80,33 +81,76 @@ public class Controller {
 	// Train network on a piece of data
 	public void trainOnInstance(String sequence, STRUCTURE structure) {
 		// set inputs to correct value
+		setInputs(sequence);
+		
 		// loop through layers
-		if (x.size() != inputs.size()) {
-			// Error
-			System.out.println("Error in training instances");
-			return;
-		}
-		// Set the values of each element of the network, starting with first
-		// layer of network and working forward
-		for (int i = 0; i < x.size(); i++) {
-			inputs.get(i).setValue(x.get(i));
-		}
-
-		// Train weights, starting with back row of network and working backward.
-		trainWeights(y,learningRate);
+		feedForward();
+		backPropagate(structure);
 	}
-
-	private void setNetworkValues() {
-		// Initialize Input layer
-		for (int i = 0; i < x.size(); i++) {
-			allUnits.get(0).get(i).setValue(x.get(i));
+	
+	private void setInputs(String sequence){
+		if(sequence.length() != inputs.size()){
+			System.out.println("Sequence length and number of inputs are not equal!");
+			System.exit(1);
 		}
-		// Initialize other layers
-		for (Collection<Unit> layer : allUnits) {
-			for (Unit unit : layer) {
+		
+		for(int i = 0; i < sequence.length(); i++){
+			inputs.get(i).setInputUnit(sequence.charAt(i));
+		}
+	}
+	
+	private void feedForward(){
+		for(int i = 1; i < allUnits.size(); i++){
+			for(Unit u : allUnits.get(i)){
+				u.calculateOutputValue();
 			}
 		}
-
+	}
+	
+	private void backPropagate(STRUCTURE structure){
+	
+		if(allUnits.get(allUnits.size() - 1).size() != 3){
+			System.out.println("Don't have three output units!");
+			System.exit(1);
+		}
+		
+		double[] struct = convertStructure(structure);
+		
+		// handle output units
+		for(int i = 0; i < allUnits.get(allUnits.size() - 1).size(); i++){
+			allUnits.get(allUnits.size() - 1).get(i).trainWeights(struct[i], LEARNING_RATE);
+		}
+		
+		// handle all hidden units
+		for(int i = allUnits.size() - 2; i > 0; i++){
+			for(Unit u : allUnits.get(i)){
+				u.trainWeights(null, LEARNING_RATE);
+			}
+		}
+	}
+	
+	private double[] convertStructure(STRUCTURE structure){
+		double[] struct = new double[3];
+		if(structure.equals(STRUCTURE.ALPHA)){		
+			struct[0] = 1;
+			struct[1] = 0;
+			struct[2] = 0;			
+		}
+		else if(structure.equals(STRUCTURE.BETA)){		
+			struct[0] = 0;
+			struct[1] = 1;
+			struct[2] = 0;			
+		}
+		else if(structure.equals(STRUCTURE.LOOP)){		
+			struct[0] = 0;
+			struct[1] = 0;
+			struct[2] = 1;			
+		}
+		else {
+			System.out.println("ERROR IN STRUCTURE!");
+			System.exit(1);
+		}
+		return struct;
 	}
 	
 	public enum STRUCTURE {
