@@ -1,52 +1,52 @@
 package neuralnetwork;
 
 import java.util.ArrayList;
-import java.util.Collection;
 
-import dataprocessing.ProteinDataSet;
-
-public class Controller {
+public class NeuralNetworkController {
 
 	// handle to our network
 	private ArrayList<ArrayList<Unit>> allUnits = new ArrayList<ArrayList<Unit>>();
 	
-	private ArrayList<InputUnit> inputs;
-	int windowSize;
 	final int aminoAcidLibrary = 20;
 	final double LEARNING_RATE = .1;
+	final int OUTPUT_LAYER_SIZE = 3;
 
 	// Input is size of each layer of units.  Ex: 17 5 3
-	public Controller(ArrayList<Integer> layerSize, int windowSize){
-		this.windowSize = windowSize;
-		
-		initializeNeuralNetwork(layerSize);
-		
-	}
-	
-	public ArrayList<ArrayList<Unit>> getNetwork(){
-		return allUnits;
-	}
-	
-	public void initializeNeuralNetwork(ArrayList<Integer> layerSize){
-		// initialize the units array list
-		for(int i = 0; i < layerSize.size(); i++){
-			allUnits.add(new ArrayList<Unit>());
-		}
-		
-		createInputs();
-		
-		for(int i = 0; i < layerSize.size(); i++) {
-			for (int j = 0; j < layerSize.get(i); j++) { 
-				if (i < layerSize.size() - 1) {
-					allUnits.get(i).add(new Unit(false));
-				}
-				else {
-					allUnits.get(i).add(new Unit(true));
-				}
-			}
-		}
-		
+	public NeuralNetworkController(int inputSize, int hiddenLayerSize){		
+		createLayer(inputSize, false);
+		createLayer(hiddenLayerSize, false);
+		createLayer(inputSize, true);
 		connectGraph();
+	}
+	
+	public NeuralNetworkController(int inputSize){
+		createLayer(inputSize, false);
+		createLayer(OUTPUT_LAYER_SIZE, true);
+		connectGraph();
+	}
+	
+	public ArrayList<Unit> autoencoderLearn(ArrayList<ArrayList<Double>> inputValues){
+		for(ArrayList<Double> inst : inputValues){
+			setInputs(inst);
+			feedForward();
+			backPropagateAE(inst);
+		}
+		
+		// only return the hidden unit layer
+		return allUnits.get(1);
+	}
+	
+	public ArrayList<Unit> neuralNetworkLearn(ArrayList<ArrayList<Double>> inputValues, 
+				ArrayList<STRUCTURE> outputs){	
+		
+		for(int i = 0; i < outputs.size(); i++){
+			setInputs(inputValues.get(i));
+			feedForward();
+			backPropagateNN(outputs.get(i));
+		}
+		
+		// only return the hidden unit layer
+		return allUnits.get(1);
 	}
 	
 	private void connectGraph(){
@@ -68,35 +68,17 @@ public class Controller {
 		}
 	}
 	
-	public void createInputs() {
-		for(int i = 0; i < windowSize; i++){
-			inputs.add(new InputUnit(aminoAcidLibrary));
+	public void createLayer(int size, boolean outputs){
+		allUnits.add(new ArrayList<Unit>());
+		for(int i = 0; i < size; i++){
+			allUnits.get(0).add(new Unit(outputs));
 		}
-		
-		for(InputUnit u : inputs){
-			allUnits.get(0).addAll(u.getInputSubUnits());
-		}
-	}
-
-	// Train network on a piece of data
-	public void trainOnInstance(String sequence, STRUCTURE structure) {
-		// set inputs to correct value
-		setInputs(sequence);
-		
-		// loop through layers
-		feedForward();
-		backPropagate(structure);
 	}
 	
-	private void setInputs(String sequence){
-		if(sequence.length() != inputs.size()){
-			System.out.println("Sequence length and number of inputs are not equal!");
-			System.exit(1);
-		}
-		
-		for(int i = 0; i < sequence.length(); i++){
-			inputs.get(i).setInputUnit(sequence.charAt(i));
-		}
+	public void setInputs(ArrayList<Double> inputValues) {		
+		for(int i = 0; i < allUnits.get(0).size(); i++){
+			allUnits.get(0).get(i).setValue(inputValues.get(i));
+		}		
 	}
 	
 	private void feedForward(){
@@ -107,7 +89,7 @@ public class Controller {
 		}
 	}
 	
-	private void backPropagate(STRUCTURE structure){
+	private void backPropagateNN(STRUCTURE structure){
 	
 		if(allUnits.get(allUnits.size() - 1).size() != 3){
 			System.out.println("Don't have three output units!");
@@ -120,12 +102,18 @@ public class Controller {
 		for(int i = 0; i < allUnits.get(allUnits.size() - 1).size(); i++){
 			allUnits.get(allUnits.size() - 1).get(i).trainWeights(struct[i], LEARNING_RATE);
 		}
+	}
+	
+	private void backPropagateAE(ArrayList<Double> outputs){
+		// handle output units
+		for(int i = 0; i < allUnits.get(allUnits.size() - 1).size(); i++){
+			allUnits.get(allUnits.size() - 1).get(i).trainWeights(outputs.get(i), LEARNING_RATE);
+		}
 		
-		// handle all hidden units
-		for(int i = allUnits.size() - 2; i > 0; i++){
-			for(Unit u : allUnits.get(i)){
-				u.trainWeights(null, LEARNING_RATE);
-			}
+		// handle last layer of hidden units in the autoencoder
+		// we can't use back propagation for more than three levels
+		for(Unit u : allUnits.get(allUnits.size() - 2)){
+			u.trainWeights(null, LEARNING_RATE);
 		}
 	}
 	

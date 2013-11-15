@@ -4,8 +4,6 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 
-import neuralnetwork.Controller.STRUCTURE;
-
 public class Unit {
 
 	private HashMap<Unit, Double> inputs = new HashMap<Unit, Double>();
@@ -21,6 +19,11 @@ public class Unit {
 	// Use this constructor for output units
 	public Unit(Collection<Unit> inputs, boolean outputUnit){
 		addAllInput(inputs);
+		this.outputUnit = outputUnit;
+	}
+	
+	public Unit(double value, boolean outputUnit){
+		this.value = value;
 		this.outputUnit = outputUnit;
 	}
 	
