@@ -15,16 +15,22 @@ public class ProteinSSClassification {
 
 		//printDataSets(data);
 		
-		ArrayList<ArrayList<Double>> d = new ArrayList<ArrayList<Double>>();
-		d.add(new ArrayList<Double>());
-		d.get(0).add(1.0);
-		d.get(0).add(0.0);
-		d.get(0).add(1.0);
+		ArrayList<ArrayList<Double>> d1 = new ArrayList<ArrayList<Double>>();
+		d1.add(new ArrayList<Double>());
+		d1.get(0).add(1.0);
+		d1.get(0).add(0.0);
+		d1.get(0).add(1.0);
 		
-		NeuralNetworkController controller = new NeuralNetworkController(3, 5);
+	//	NeuralNetworkController controller = new NeuralNetworkController(3, 5);
 		
-		ArrayList<Unit> hiddenLayer = controller.autoencoderLearn(d);
-		System.out.println("Hidden layer size: " + hiddenLayer.size());
+		ArrayList<ArrayList<Double>> d2 = new ArrayList<ArrayList<Double>>();
+		d2.add(new ArrayList<Double>());
+		d2.get(0).add(1.0);
+		d2.get(0).add(0.0);
+		d2.get(0).add(0.0);
+		
+	//	ArrayList<Unit> hiddenLayer1 = controller.autoencoderLearn(d1);
+	//	ArrayList<Unit> hiddenLayer2 = controller.autoencoderLearn(d1);
 	}
 	
 

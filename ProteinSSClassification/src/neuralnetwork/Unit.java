@@ -112,8 +112,9 @@ public class Unit {
 	private void calculateHiddenUnitError(){
 		double outputError = 0;
 		for(Unit u : outputs.keySet()){
+			//System.out.println("Old weight: " + outputs.get(u) + " New Weight: " + u.getWeight(this));
 			outputError += u.getError() * outputs.get(u);
-			outputs.put(u, u.getWeight(this));
+			outputs.put(u, u.getWeight(this));						
 		}
 		
 		error = value * (1 - value) * outputError;

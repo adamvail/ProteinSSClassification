@@ -13,10 +13,10 @@ public class NeuralNetworkController {
 	final int OUTPUT_LAYER_SIZE = 3;
 
 	// Input is size of each layer of units.  Ex: 17 5 3
-	public NeuralNetworkController(int inputSize, int hiddenLayerSize){		
-		createLayer(inputSize, false);
+	public NeuralNetworkController(ArrayList<Unit> inputLayer, int hiddenLayerSize){	
+		allUnits.add(inputLayer);
 		createLayer(hiddenLayerSize, false);
-		createLayer(inputSize, true);
+		createLayer(inputLayer.size(), true);
 		connectGraph();
 	}
 	
@@ -26,7 +26,7 @@ public class NeuralNetworkController {
 		connectGraph();
 	}
 	
-	public ArrayList<Unit> autoencoderLearn(ArrayList<ArrayList<Double>> inputValues){
+	public ArrayList<ArrayList<Unit>> autoencoderLearn(ArrayList<ArrayList<Double>> inputValues){
 		for(ArrayList<Double> inst : inputValues){
 			setInputs(inst);
 			printInitialWeights();
@@ -36,7 +36,7 @@ public class NeuralNetworkController {
 		}
 		
 		// only return the hidden unit layer
-		return allUnits.get(1);
+		return allUnits;
 	}
 	
 	public ArrayList<Unit> neuralNetworkLearn(ArrayList<ArrayList<Double>> inputValues, 
@@ -106,6 +106,10 @@ public class NeuralNetworkController {
 		for(int i = 0; i < allUnits.get(allUnits.size() - 1).size(); i++){
 			allUnits.get(allUnits.size() - 1).get(i).trainWeights(struct[i], LEARNING_RATE);
 		}
+		
+		for(int i = 0; i < allUnits.get(0).size(); i++){
+			allUnits.get(0).get(i).trainWeights(struct[i], LEARNING_RATE);
+		}
 	}
 	
 	private void backPropagateAE(ArrayList<Double> outputs){
@@ -117,6 +121,12 @@ public class NeuralNetworkController {
 		// handle last layer of hidden units in the autoencoder
 		// we can't use back propagation for more than three levels
 		for(Unit u : allUnits.get(allUnits.size() - 2)){
+			u.trainWeights(null, LEARNING_RATE);
+		}
+		
+		// Doing this for input units only because we need consistent
+		// weights for output units.
+		for(Unit u : allUnits.get(0)){
 			u.trainWeights(null, LEARNING_RATE);
 		}
 	}
@@ -146,7 +156,7 @@ public class NeuralNetworkController {
 	}
 	
 	public void printInitialWeights(){
-		DecimalFormat format = new DecimalFormat("0.00");
+		DecimalFormat format = new DecimalFormat("0.0000");
 		for(int i = 0; i < allUnits.get(0).size(); i++){
 			Unit input = allUnits.get(0).get(i);
 			for(int k = 0; k < allUnits.get(1).size(); k++){
@@ -156,6 +166,17 @@ public class NeuralNetworkController {
 			}
 			System.out.println();
 		}
+		
+		for(int i = 0; i < allUnits.get(1).size(); i++){
+			Unit input = allUnits.get(1).get(i);
+			for(int k = 0; k < allUnits.get(2).size(); k++){
+				Unit hidden = allUnits.get(2).get(k);
+				double weight = hidden.getInputs().get(input);
+				System.out.println("H" + i + " -> O" + k + " : " + format.format(weight));
+			}
+			System.out.println();
+		}
+		
 		System.out.println("\n\n");
 	}
 	
@@ -163,13 +184,13 @@ public class NeuralNetworkController {
 	 * Print the resultant graph on a per input/output basis for clarity
 	 */
 	public void printGraph(){
-		DecimalFormat format = new DecimalFormat("0.00");
+		DecimalFormat format = new DecimalFormat("0.0000");
 		System.out.println("Printing inputs");
 		// Get the input unit
 		for(Unit input : allUnits.get(0)){
 			System.out.println(format.format(input.getValue()));
 			for(Unit hidden : allUnits.get(1)){
-				System.out.println("        " + format.format(hidden.getInputs().get(input)) + " -> w: " + format.format(hidden.getValue()));
+				System.out.println("        Input w: " + format.format(hidden.getInputs().get(input)) + " -> Hidden v: " + format.format(hidden.getValue()));
 				System.out.println();
 			}
 			System.out.println("\n");
@@ -178,11 +199,14 @@ public class NeuralNetworkController {
 		System.out.println("Printing outputs");
 		
 		// Do the same for output units
-		for(Unit output : allUnits.get(2)){
-			System.out.println("            " + format.format(output.getValue()));
-			for(Unit hidden : allUnits.get(1)){
-				System.out.println(format.format(hidden.getValue()) + " -> w: " + format.format(output.getInputs().get(hidden)));
+		for(int k = 0; k < allUnits.get(2).size(); k++){
+			Unit output = allUnits.get(2).get(k);
+			System.out.println("                    O" + k + ": " + format.format(output.getValue()));
+			for(int i = 0; i < allUnits.get(1).size(); i++){
+				Unit hidden = allUnits.get(1).get(i);
+				System.out.println("H" + i + " " + format.format(hidden.getValue()) + " -> w: " + format.format(output.getInputs().get(hidden)));
 			}
+			System.out.println();
 		}		
 	}
 	
