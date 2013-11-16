@@ -2,6 +2,8 @@ package classification;
 
 import java.util.ArrayList;
 
+import neuralnetwork.NeuralNetworkController;
+import neuralnetwork.Unit;
 import dataprocessing.CrossValidation;
 import dataprocessing.Protein;
 import dataprocessing.ProteinDataSet;
@@ -9,9 +11,20 @@ import dataprocessing.ProteinDataSet;
 public class ProteinSSClassification {
 	
 	public ProteinSSClassification(String filename){
-		ArrayList<ProteinDataSet> data = CrossValidation.processData(crossValidationDegree, filename);
+		//ArrayList<ProteinDataSet> data = CrossValidation.processData(crossValidationDegree, filename);
 
 		//printDataSets(data);
+		
+		ArrayList<ArrayList<Double>> d = new ArrayList<ArrayList<Double>>();
+		d.add(new ArrayList<Double>());
+		d.get(0).add(1.0);
+		d.get(0).add(0.0);
+		d.get(0).add(1.0);
+		
+		NeuralNetworkController controller = new NeuralNetworkController(3, 5);
+		
+		ArrayList<Unit> hiddenLayer = controller.autoencoderLearn(d);
+		System.out.println("Hidden layer size: " + hiddenLayer.size());
 	}
 	
 

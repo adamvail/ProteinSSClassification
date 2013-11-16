@@ -1,5 +1,6 @@
 package neuralnetwork;
 
+import java.text.DecimalFormat;
 import java.util.ArrayList;
 
 public class NeuralNetworkController {
@@ -28,8 +29,10 @@ public class NeuralNetworkController {
 	public ArrayList<Unit> autoencoderLearn(ArrayList<ArrayList<Double>> inputValues){
 		for(ArrayList<Double> inst : inputValues){
 			setInputs(inst);
+			printInitialWeights();
 			feedForward();
 			backPropagateAE(inst);
+			printGraph();
 		}
 		
 		// only return the hidden unit layer
@@ -71,7 +74,8 @@ public class NeuralNetworkController {
 	public void createLayer(int size, boolean outputs){
 		allUnits.add(new ArrayList<Unit>());
 		for(int i = 0; i < size; i++){
-			allUnits.get(0).add(new Unit(outputs));
+			// Get this most recent layer that was just added
+			allUnits.get(allUnits.size() - 1).add(new Unit(outputs));
 		}
 	}
 	
@@ -139,6 +143,47 @@ public class NeuralNetworkController {
 			System.exit(1);
 		}
 		return struct;
+	}
+	
+	public void printInitialWeights(){
+		DecimalFormat format = new DecimalFormat("0.00");
+		for(int i = 0; i < allUnits.get(0).size(); i++){
+			Unit input = allUnits.get(0).get(i);
+			for(int k = 0; k < allUnits.get(1).size(); k++){
+				Unit hidden = allUnits.get(1).get(k);
+				double weight = hidden.getInputs().get(input);
+				System.out.println("I" + i + " -> H" + k + " : " + format.format(weight));
+			}
+			System.out.println();
+		}
+		System.out.println("\n\n");
+	}
+	
+	/**
+	 * Print the resultant graph on a per input/output basis for clarity
+	 */
+	public void printGraph(){
+		DecimalFormat format = new DecimalFormat("0.00");
+		System.out.println("Printing inputs");
+		// Get the input unit
+		for(Unit input : allUnits.get(0)){
+			System.out.println(format.format(input.getValue()));
+			for(Unit hidden : allUnits.get(1)){
+				System.out.println("        " + format.format(hidden.getInputs().get(input)) + " -> w: " + format.format(hidden.getValue()));
+				System.out.println();
+			}
+			System.out.println("\n");
+		}
+		
+		System.out.println("Printing outputs");
+		
+		// Do the same for output units
+		for(Unit output : allUnits.get(2)){
+			System.out.println("            " + format.format(output.getValue()));
+			for(Unit hidden : allUnits.get(1)){
+				System.out.println(format.format(hidden.getValue()) + " -> w: " + format.format(output.getInputs().get(hidden)));
+			}
+		}		
 	}
 	
 	public enum STRUCTURE {
