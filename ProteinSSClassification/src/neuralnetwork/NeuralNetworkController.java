@@ -20,8 +20,8 @@ public class NeuralNetworkController {
 		connectGraph();
 	}
 	
-	public NeuralNetworkController(int inputSize){
-		createLayer(inputSize, false);
+	public NeuralNetworkController(ArrayList<Unit> inputLayer){
+		allUnits.add(inputLayer);
 		createLayer(OUTPUT_LAYER_SIZE, true);
 		connectGraph();
 	}
@@ -39,7 +39,7 @@ public class NeuralNetworkController {
 		return allUnits;
 	}
 	
-	public ArrayList<Unit> neuralNetworkLearn(ArrayList<ArrayList<Double>> inputValues, 
+	public ArrayList<ArrayList<Unit>> neuralNetworkLearn(ArrayList<ArrayList<Double>> inputValues, 
 				ArrayList<STRUCTURE> outputs){	
 		
 		for(int i = 0; i < outputs.size(); i++){
@@ -49,7 +49,7 @@ public class NeuralNetworkController {
 		}
 		
 		// only return the hidden unit layer
-		return allUnits.get(1);
+		return allUnits;
 	}
 	
 	private void connectGraph(){

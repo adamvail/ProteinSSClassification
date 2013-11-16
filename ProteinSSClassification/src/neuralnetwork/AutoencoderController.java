@@ -2,6 +2,8 @@ package neuralnetwork;
 
 import java.util.ArrayList;
 
+import neuralnetwork.NeuralNetworkController.STRUCTURE;
+
 import dataprocessing.Protein;
 import dataprocessing.ProteinDataSet;
 
@@ -9,6 +11,7 @@ public class AutoencoderController {
 
 	ProteinDataSet data;
 	ArrayList<ArrayList<Double>> processedData;
+	ArrayList<STRUCTURE> structures;
 	ArrayList<ArrayList<Unit>> network = new ArrayList<ArrayList<Unit>>();
 	final int windowSize = 13;
 	
@@ -20,8 +23,31 @@ public class AutoencoderController {
 		ArrayList<ArrayList<Double>> processedData = new ArrayList<ArrayList<Double>>();
 		for (Protein protein : data.getTrain()) {
 			processedData.addAll(convertProteinToDoubles(protein));
+			structures.addAll(convertProteinStructure(protein));
 		}
 		return processedData;
+	}
+	
+	ArrayList<STRUCTURE> convertProteinStructure(Protein protein) {
+		String structure = protein.getSecondaryStructure();
+		ArrayList<STRUCTURE> structures = new ArrayList<STRUCTURE>();
+		for (char s : structure.toCharArray()) {
+			switch(s) {
+			case 'h': 
+				structures.add(STRUCTURE.ALPHA);
+				break;
+			case 'e':
+				structures.add(STRUCTURE.BETA);
+				break;
+			case '_':
+				structures.add(STRUCTURE.LOOP);
+				break;	
+			default:
+				System.out.println("Error in structure data.  Contained character " + s);
+				System.exit(1);
+			}
+		}
+		return structures;		
 	}
 	
 	/**
@@ -104,11 +130,7 @@ public class AutoencoderController {
 		}
 	}
 	
-	public void learnHiddenLayer(int hiddenLayerSize) {
-		NeuralNetworkController layerController = new 
-				NeuralNetworkController(network.get(network.size() - 1), hiddenLayerSize);
-		
-		
+	public ArrayList<ArrayList<Double>> feedDataThroughNetwork() {	
 		// Process the data through the network so far
 		ArrayList<ArrayList<Double>> newData = new ArrayList<ArrayList<Double>>();
 		for (ArrayList<Double> datum : processedData) {
@@ -119,10 +141,28 @@ public class AutoencoderController {
 			}
 			newData.add(newValues);
 		}
+		return newData;
+	}
+	
+	public void learnHiddenLayer(int hiddenLayerSize) {
+		NeuralNetworkController layerController = new 
+				NeuralNetworkController(network.get(network.size() - 1), hiddenLayerSize);
+		
+		ArrayList<ArrayList<Double>> newData = feedDataThroughNetwork();
 			
 		ArrayList<ArrayList<Unit>> autoEncoder = layerController.autoencoderLearn(newData);
 		clearOutputConnections(autoEncoder.get(1));
-		network.add(autoEncoder.get(1));
+		network.add(autoEncoder.get(1));	
+	}
+	
+	public void learnOuterLayer() {
+		NeuralNetworkController layerController = new 
+				NeuralNetworkController(network.get(network.size() - 1));
+		
+		ArrayList<ArrayList<Double>> newData = feedDataThroughNetwork();
+		
+		ArrayList<ArrayList<Unit>> neuralNet = layerController.neuralNetworkLearn(newData, structures);
+		network.add(neuralNet.get(1));	
 		
 	}
 	
