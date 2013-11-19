@@ -166,4 +166,53 @@ public class AutoencoderController {
 		
 	}
 	
+	private STRUCTURE convertOutputsToStructure(){
+		double highestOutput = Double.NEGATIVE_INFINITY;
+		int winner = -1;
+		
+		for(int i = 0; i < network.get(network.size() - 1).size(); i++){
+			Unit output = network.get(network.size() - 1).get(i);
+			if(output.getValue() > highestOutput){
+				highestOutput = output.getValue();
+				winner = i;
+			}
+		}
+		
+		switch(winner){
+		case 0:
+			return STRUCTURE.ALPHA;
+		case 1:
+			return STRUCTURE.BETA;
+		case 2:
+			return STRUCTURE.LOOP;
+		default:
+			System.err.println("THERE WAS NO WINNER");
+			System.exit(1);
+		}
+		return null;
+	}
+	
+	public void testAllData() {
+		int correct = 0;
+		int incorrect = 0;
+		for(int i = 0; i < processedData.size(); i++){
+			STRUCTURE prediction = classifyDeepNetwork(processedData.get(i));
+			if(prediction == structures.get(i)){
+				correct++;
+				//System.out.println("CORRECT");
+			}
+			else {
+				incorrect++;
+			}
+		}
+		System.out.println("Percentage correct: " + correct / processedData.size());
+	}
+	
+	public STRUCTURE classifyDeepNetwork(ArrayList<Double> instance){
+		feedForward(instance);
+		
+		// The classification is done winner take all
+		
+		return convertOutputsToStructure();
+	}
 }

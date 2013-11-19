@@ -29,10 +29,10 @@ public class NeuralNetworkController {
 	public ArrayList<ArrayList<Unit>> autoencoderLearn(ArrayList<ArrayList<Double>> inputValues){
 		for(ArrayList<Double> inst : inputValues){
 			setInputs(inst);
-			printInitialWeights();
+			//printInitialWeights();
 			feedForward();
 			backPropagateAE(inst);
-			printGraph();
+			//printGraph();
 		}
 		
 		// only return the hidden unit layer
@@ -208,6 +208,57 @@ public class NeuralNetworkController {
 			}
 			System.out.println();
 		}		
+	}
+	
+	private STRUCTURE convertOutputsToStructure(){
+		double highestOutput = Double.NEGATIVE_INFINITY;
+		int winner = -1;
+		
+		for(int i = 0; i < allUnits.get(allUnits.size() - 1).size(); i++){
+			Unit output = allUnits.get(allUnits.size() - 1).get(i);
+			if(output.getValue() > highestOutput){
+				highestOutput = output.getValue();
+				winner = i;
+			}
+		}
+		
+		switch(winner){
+		case 0:
+			return STRUCTURE.ALPHA;
+		case 1:
+			return STRUCTURE.BETA;
+		case 2:
+			return STRUCTURE.LOOP;
+		default:
+			System.err.println("THERE WAS NO WINNER");
+			System.exit(1);
+		}
+		return null;
+	}
+	
+	public STRUCTURE classifyNeuralNetwork(ArrayList<Double> instance){
+		setInputs(instance);
+		feedForward();
+		
+		// The classification is done winner take all
+		
+		return convertOutputsToStructure();
+	}
+	
+	public boolean classifyAutoencoder(ArrayList<Double> instance){
+		setInputs(instance);
+		feedForward();
+		
+		boolean inputReproduced = true;
+		System.out.println("Autoencoder input->output");
+		for (int i = 0; i < allUnits.get(allUnits.size() - 1).size(); i++) {
+			if (allUnits.get(allUnits.size()-3).get(i).getValue() != allUnits.get(allUnits.size()-1).get(i).getValue()) {
+				inputReproduced = false;
+			}
+			System.out.println("   " + instance.get(i) + " -> " + allUnits.get(allUnits.size()-1).get(i).getValue());
+		}
+		// The classification is done winner take all
+		return inputReproduced;
 	}
 	
 	public enum STRUCTURE {
