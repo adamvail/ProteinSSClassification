@@ -108,7 +108,7 @@ public class NeuralNetworkController {
 		}
 		
 		for(int i = 0; i < allUnits.get(0).size(); i++){
-			allUnits.get(0).get(i).trainWeights(struct[i], LEARNING_RATE);
+			allUnits.get(0).get(i).trainWeights(null, LEARNING_RATE);
 		}
 	}
 	
