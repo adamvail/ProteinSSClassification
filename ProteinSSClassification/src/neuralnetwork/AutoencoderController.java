@@ -246,8 +246,8 @@ public class AutoencoderController {
 		ArrayList<STRUCTURE> structs = new ArrayList<STRUCTURE>();
 		
 		initializeTestData(procData, structs);
-		int correct = 0;
-		int incorrect = 0;
+		double correct = 0;
+		double incorrect = 0;
 		for(int i = 0; i < procData.size(); i++){
 			STRUCTURE prediction = classifyDeepNetwork(procData.get(i));
 			if(prediction == structs.get(i)){
@@ -262,8 +262,8 @@ public class AutoencoderController {
 	}
 	
 	public void testAllTrainingData() {
-		int correct = 0;
-		int incorrect = 0;
+		double correct = 0;
+		double incorrect = 0;
 		for(int i = 0; i < processedData.size(); i++){
 			STRUCTURE prediction = classifyDeepNetwork(processedData.get(i));
 			System.out.println("Prediction: " + prediction.toString() + "  Actual: " + structures.get(i).toString());
