@@ -15,18 +15,6 @@ import org.junit.Test;
 
 public class PerceptronTest {
 
-	
-	private double squaredSum(ArrayList<Double> w1, ArrayList<Double> w2) {
-		double product = 0.0;
-		if (w1.size() != w2.size()){
-			System.out.println("Weight vectors are different in tests!");
-			System.exit(1);
-		}
-		for (int i = 0; i < w1.size(); i++) {
-			product += Math.pow((w1.get(i) - w2.get(i)), 2);
-		}
-		return product;
-	}
 
 	@Test
 	public void test() {
@@ -65,35 +53,20 @@ public class PerceptronTest {
 		
 		
 		// Output network
-		ArrayList<ArrayList<Unit>> out = null;
-		ArrayList<Double> weights_old = new ArrayList<Double>();
-		ArrayList<Double> weights = new ArrayList<Double>();
-		for (int i = 0; i < 18; i++) {
-			weights_old.add(0.0);
-			weights.add(1.0);
-		}
-		
-		// Train the system
-		int iter = 0;
-		while (squaredSum(weights, weights_old) > 1e-4 && iter < 500) {		
-			out = net.neuralNetworkLearn(data, labels);
-			weights_old = weights;
-			weights = new ArrayList<Double>();
-			for (int i = 0; i < 6; i++) {
-				for (int j = 0; j < 3; j++) {
-					//System.out.print(out.get(0).size() + "/" + out.get(1).size()
-					//		+ "  ");
-					//System.out.print((3*i+j) + " ");
-					weights.add(out.get(1).get(j).getWeight(
-							out.get(0).get(i)));
-				}
-			}
-			System.out.println("iteration " + iter + " has deltaW " +
-					squaredSum(weights, weights_old));
-			iter++;
-		}
-		
+		ArrayList<ArrayList<Unit>> out = net.neuralNetworkLearn(data, labels);
+
 		//net.printGraph();
+		
+		ArrayList<Double> weights = new ArrayList<Double>();
+		for (int i = 0; i < 6; i++) {
+			for (int j = 0; j < 3; j++) {
+				//System.out.print(out.get(0).size() + "/" + out.get(1).size()
+				//		+ "  ");
+				//System.out.print((3*i+j) + " ");
+				weights.add(out.get(1).get(j).getWeight(
+						out.get(0).get(i)));
+			}
+		}
 		
 		// Test that weights are as expected.
 		boolean testPassed = true;

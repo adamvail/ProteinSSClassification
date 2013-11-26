@@ -34,6 +34,10 @@ public class Unit {
 		this.outputUnit = outputUnit;
 	}
 	
+	public Collection<Double> getWeights() {
+		return inputs.values();
+	}
+	
 	public void calculateOutputValue(){
 		double inputSum = 0;
 		for(Unit in : inputs.keySet()){

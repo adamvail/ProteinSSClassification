@@ -11,7 +11,10 @@ public class NeuralNetworkController {
 	final int aminoAcidLibrary = 20;
 	final double LEARNING_RATE = .1;
 	final int OUTPUT_LAYER_SIZE = 3;
-
+	
+	final double TOLERANCE = 1e-7;
+	final int MAX_ITER = 4000;
+			
 	// Input is size of each layer of units.  Ex: 17 5 3
 	public NeuralNetworkController(ArrayList<Unit> inputLayer, int hiddenLayerSize){	
 		allUnits.add(inputLayer);
@@ -26,15 +29,62 @@ public class NeuralNetworkController {
 		connectGraph();
 	}
 	
-	public ArrayList<ArrayList<Unit>> autoencoderLearn(ArrayList<ArrayList<Double>> inputValues){
-		for(ArrayList<Double> inst : inputValues){
-			setInputs(inst);
-			//printInitialWeights();
-			feedForward();
-			backPropagateAE(inst);
-			//printGraph();
+	public ArrayList<Double> testHiddenLayer(ArrayList<Double> inputValues) {
+		setInputs(inputValues);
+		feedForward();
+		ArrayList<Double> hiddenVals = new ArrayList<Double>();
+		for(int i = 0; i < allUnits.get(1).size(); i++) {
+			hiddenVals.add(allUnits.get(1).get(i).getValue());
+		}
+		return hiddenVals;
+	}
+	
+	private double squaredSum(ArrayList<Double> w1, ArrayList<Double> w2) {
+		double product = 0.0;
+		if (w1.size() != w2.size()) {
+			System.out.println("Weight vectors are different in tests!");
+			System.exit(1);
+		}
+		for (int i = 0; i < w1.size(); i++) {
+			product += Math.pow((w1.get(i) - w2.get(i)), 2);
+		}
+		return product;
+	}
+	
+	private ArrayList<Double> getWeights(int layer) {
+		ArrayList<Double> weights = new ArrayList<Double>();
+	
+		for (int j = 0; j <allUnits.get(layer).size(); j++) {
+			weights.addAll(allUnits.get(layer).get(j).getWeights());
 		}
 		
+		return weights;
+	}
+	
+	public ArrayList<ArrayList<Unit>> autoencoderLearn(ArrayList<ArrayList<Double>> inputValues){
+		// Train the system
+		
+		ArrayList<Double> weights = getWeights(allUnits.size() - 2);
+		ArrayList<Double> weights_old = new ArrayList<Double>();
+		// Initialize weights_old to be all 0's, right now.
+		for (int i = 0; i < weights.size(); i++) {
+			weights_old.add(0.0);
+		}
+		
+		int iter = 0;
+		while (squaredSum(weights, weights_old) > TOLERANCE && iter < MAX_ITER) {
+			for(ArrayList<Double> inst : inputValues){
+				setInputs(inst);
+				//printInitialWeights();
+				feedForward();
+				backPropagateAE(inst);
+				//printGraph();
+			}	
+			weights_old = weights;
+			weights = getWeights(allUnits.size() - 2);
+			iter++;
+		}
+
 		// only return the hidden unit layer
 		return allUnits;
 	}
@@ -42,10 +92,25 @@ public class NeuralNetworkController {
 	public ArrayList<ArrayList<Unit>> neuralNetworkLearn(ArrayList<ArrayList<Double>> inputValues, 
 				ArrayList<STRUCTURE> outputs){	
 		
-		for(int i = 0; i < outputs.size(); i++){
-			setInputs(inputValues.get(i));
-			feedForward();
-			backPropagateNN(outputs.get(i));
+		// Train the system
+	
+		ArrayList<Double> weights = getWeights(allUnits.size() - 1);
+		ArrayList<Double> weights_old = new ArrayList<Double>();
+		// Initialize weights_old to be all 0's, right now.
+		for (int i = 0; i < weights.size(); i++) {
+			weights_old.add(0.0);
+		}
+		
+		int iter = 0;
+		while (squaredSum(weights, weights_old) > TOLERANCE && iter < MAX_ITER) {
+			for(int i = 0; i < outputs.size(); i++){
+				setInputs(inputValues.get(i));
+				feedForward();
+				backPropagateNN(outputs.get(i));
+			}		
+			weights_old = weights;
+			weights = getWeights(allUnits.size() - 1);
+			iter++;
 		}
 		
 		// only return the hidden unit layer
@@ -255,8 +320,11 @@ public class NeuralNetworkController {
 			if (allUnits.get(allUnits.size()-3).get(i).getValue() != allUnits.get(allUnits.size()-1).get(i).getValue()) {
 				inputReproduced = false;
 			}
-			System.out.println("   " + instance.get(i) + " -> " + allUnits.get(allUnits.size()-1).get(i).getValue());
+			if (allUnits.get(allUnits.size()-1).get(i).getValue() > 0.1) {
+				System.out.println(i + ":   " + instance.get(i) + " -> " + allUnits.get(allUnits.size()-1).get(i).getValue());
+			}
 		}
+		System.out.println();
 		// The classification is done winner take all
 		return inputReproduced;
 	}

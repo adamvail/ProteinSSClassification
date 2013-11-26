@@ -13,22 +13,33 @@ public class AutoencoderController {
 	ArrayList<ArrayList<Double>> processedData;
 	ArrayList<STRUCTURE> structures;
 	ArrayList<ArrayList<Unit>> network = new ArrayList<ArrayList<Unit>>();
+	NeuralNetworkController mostRecentLayer;
 	final int windowSize = 13;
+	final int NUM_AMINO_ACIDS = 20;
+	
+	public NeuralNetworkController getMostRecentLayer() {
+		return mostRecentLayer;
+	}
+	
+	public ArrayList<ArrayList<Double>> getProcessedData() {
+		return processedData;
+	}
+	
 	
 	public AutoencoderController(ProteinDataSet data){
 		this.data = data;
 	}
 	
-	public ArrayList<ArrayList<Double>> initializeInputs(){
-		ArrayList<ArrayList<Double>> processedData = new ArrayList<ArrayList<Double>>();
+	private void initializeInputs(){
+		processedData = new ArrayList<ArrayList<Double>>();
+		structures = new ArrayList<STRUCTURE>();
 		for (Protein protein : data.getTrain()) {
 			processedData.addAll(convertProteinToDoubles(protein));
 			structures.addAll(convertProteinStructure(protein));
 		}
-		return processedData;
 	}
 	
-	ArrayList<STRUCTURE> convertProteinStructure(Protein protein) {
+	private ArrayList<STRUCTURE> convertProteinStructure(Protein protein) {
 		String structure = protein.getSecondaryStructure();
 		ArrayList<STRUCTURE> structures = new ArrayList<STRUCTURE>();
 		for (char s : structure.toCharArray()) {
@@ -39,7 +50,7 @@ public class AutoencoderController {
 			case 'e':
 				structures.add(STRUCTURE.BETA);
 				break;
-			case '_':
+			case '-':
 				structures.add(STRUCTURE.LOOP);
 				break;	
 			default:
@@ -50,6 +61,33 @@ public class AutoencoderController {
 		return structures;		
 	}
 	
+	private int convertAminoAcidToDouble(char c) {	
+		switch (c) {
+		case 'A': return 0;
+		case 'R': return 1;
+		case 'N': return 2;
+		case 'D': return 3;
+		case 'C': return 4;
+		case 'Q': return 5;
+		case 'E': return 6;
+		case 'G': return 7;
+		case 'H': return 8;
+		case 'I': return 9;
+		case 'L': return 10;
+		case 'K': return 11;
+		case 'M': return 12;
+		case 'F': return 13;
+		case 'P': return 14;
+		case 'S': return 15;
+		case 'T': return 16;
+		case 'W': return 17;
+		case 'Y': return 18;
+		case 'V': return 19;	
+		default: return -1;
+		}
+		
+	}
+	
 	/**
 	 * Create an arraylist of arraylists where each element is
 	 * a list of doubles representing an amino acid sequence of
@@ -58,7 +96,7 @@ public class AutoencoderController {
 	 * @param protein - protein to chunk using the sliding window
 	 * @return
 	 */
-	ArrayList<ArrayList<Double>> convertProteinToDoubles(Protein protein) {
+	private ArrayList<ArrayList<Double>> convertProteinToDoubles(Protein protein) {
 		
 		int halfWindow = windowSize / 2;
 		
@@ -80,10 +118,10 @@ public class AutoencoderController {
 					target = -1;
 				}
 				else {
-					target = ((int)aminoAcid) - 65;
+					target = convertAminoAcidToDouble(aminoAcid);
 				}
 				ArrayList<Double> subUnits = new ArrayList<Double>();
-				for(int k = 0; k < subUnits.size(); k++){
+				for(int k = 0; k < NUM_AMINO_ACIDS; k++){
 					if(k == target){
 						subUnits.add(1.0);
 					}
@@ -98,7 +136,7 @@ public class AutoencoderController {
 		return inputs;
 	}
 	
-	public void clearOutputConnections(ArrayList<Unit> layer){		
+	private void clearOutputConnections(ArrayList<Unit> layer){		
 		for (Unit u : layer) {
 			u.getOutputs().clear();
 		}
@@ -109,17 +147,18 @@ public class AutoencoderController {
 		for (int i = 0; i < windowSize * 20; i++) {
 			inputLayer.add(new Unit(false));
 		}
+		initializeInputs();
 		NeuralNetworkController layerController = new NeuralNetworkController(inputLayer, hiddenLayerSize);
-		processedData = initializeInputs();
-		
+	
 		ArrayList<ArrayList<Unit>> autoEncoder = layerController.autoencoderLearn(processedData);
+		mostRecentLayer = layerController;
 		
 		network.add(autoEncoder.get(0));
 		network.add(autoEncoder.get(1));
 		clearOutputConnections(network.get(1));
 	}
 	
-	public void feedForward(ArrayList<Double> datum) {
+	private void feedForward(ArrayList<Double> datum) {
 		for(int i = 0; i < datum.size(); i++) {
 			network.get(0).get(i).setValue(datum.get(i));
 		}
@@ -151,17 +190,19 @@ public class AutoencoderController {
 		ArrayList<ArrayList<Double>> newData = feedDataThroughNetwork();
 			
 		ArrayList<ArrayList<Unit>> autoEncoder = layerController.autoencoderLearn(newData);
+		mostRecentLayer = layerController;
 		clearOutputConnections(autoEncoder.get(1));
 		network.add(autoEncoder.get(1));	
 	}
 	
-	public void learnOuterLayer() {
+	public void learnOutputLayer() {
 		NeuralNetworkController layerController = new 
 				NeuralNetworkController(network.get(network.size() - 1));
 		
 		ArrayList<ArrayList<Double>> newData = feedDataThroughNetwork();
 		
 		ArrayList<ArrayList<Unit>> neuralNet = layerController.neuralNetworkLearn(newData, structures);
+		mostRecentLayer = layerController;
 		network.add(neuralNet.get(1));	
 		
 	}
@@ -192,11 +233,43 @@ public class AutoencoderController {
 		return null;
 	}
 	
-	public void testAllData() {
+	private void initializeTestData(ArrayList<ArrayList<Double>> procData, 
+			ArrayList<STRUCTURE> structs) {
+		for (Protein protein : data.getTrain()) {
+			procData.addAll(convertProteinToDoubles(protein));
+			structs.addAll(convertProteinStructure(protein));
+		}
+	}
+	
+	public void runTestSet() {
+		ArrayList<ArrayList<Double>> procData = new ArrayList<ArrayList<Double>>();
+		ArrayList<STRUCTURE> structs = new ArrayList<STRUCTURE>();
+		
+		initializeTestData(procData, structs);
+		int correct = 0;
+		int incorrect = 0;
+		for(int i = 0; i < procData.size(); i++){
+			STRUCTURE prediction = classifyDeepNetwork(procData.get(i));
+			if(prediction == structs.get(i)){
+				correct++;
+				//System.out.println("CORRECT");
+			}
+			else {
+				incorrect++;
+			}
+		}
+		System.out.println("Percentage correct: " + (correct / procData.size()) * 100);
+	}
+	
+	public void testAllTrainingData() {
 		int correct = 0;
 		int incorrect = 0;
 		for(int i = 0; i < processedData.size(); i++){
 			STRUCTURE prediction = classifyDeepNetwork(processedData.get(i));
+			System.out.println("Prediction: " + prediction.toString() + "  Actual: " + structures.get(i).toString());
+			for (int j = 0; j < network.get(network.size() - 1).size(); j++) {
+				System.out.println("   node " + j + " value: " + network.get(network.size() - 1).get(j).getValue());
+			}
 			if(prediction == structures.get(i)){
 				correct++;
 				//System.out.println("CORRECT");
@@ -205,10 +278,10 @@ public class AutoencoderController {
 				incorrect++;
 			}
 		}
-		System.out.println("Percentage correct: " + correct / processedData.size());
+		System.out.println("Percentage correct: " + (correct / processedData.size()) * 100);
 	}
 	
-	public STRUCTURE classifyDeepNetwork(ArrayList<Double> instance){
+	private STRUCTURE classifyDeepNetwork(ArrayList<Double> instance){
 		feedForward(instance);
 		
 		// The classification is done winner take all
