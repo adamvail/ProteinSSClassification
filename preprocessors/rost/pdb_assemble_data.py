@@ -52,12 +52,20 @@ class AssembleData(object):
     # g -> h
     # i -> h
     # e -> e
-    # b -> _
-    # t -> _
-    # s -> _
+    # b -> -
+    # t -> -
+    # s -> -
+    # c -> -
     def clean_classifications(self, proteins):
         for protein in proteins:
-            orig_classification = proteins[protein]
+            orig_classification = proteins[protein][1]
+            print orig_classification
+            proteins[protein][1] = proteins[protein][1].replace('G', 'h').replace('I', 'h').replace('H', 'h')
+            proteins[protein][1] = proteins[protein][1].replace('B', '-').replace('T', '-').replace('S', '-').replace('C', '-').replace('?', '-')
+            proteins[protein][1] = proteins[protein][1].replace('E', 'e')
+            print proteins[protein][1] 
+            print
+            '''
             clean_classification = ""
             for letter in range(len(orig_classification)):
                 if orig_classification[letter] == 'G' or\
@@ -70,10 +78,13 @@ class AssembleData(object):
                         orig_classification[letter] == 'T' or\
                         orig_classification[letter] == 'S':
                     clean_classification += '_'
+            print clean_classification
+            print
             if len(clean_classification) != len(orig_classification):
                 print "Classification translation did not come out right!!"
             proteins[protein] = clean_classification
 #            return proteins
+            '''
 
     def output_proteins(self, proteins):
         output = open("protein_data", "w")
@@ -96,5 +107,5 @@ if __name__ == '__main__':
     proteins = ad.get_protein_list()
     ad.get_data(proteins)
     ad.clean_classifications(proteins)
-    ad.print_proteins(proteins)
+    #ad.print_proteins(proteins)
     ad.output_proteins(proteins)

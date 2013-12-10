@@ -22,11 +22,11 @@ public class BaselineNeuralNetwork {
 	final int OUTPUT_LAYER_SIZE = 3;
 	
 	final double TOLERANCE = 1e-7;
-	final int MAX_ITER = 4000;
+	final int MAX_ITER = 500;
 	
 	int windowSize = 13;
 	final int NUM_AMINO_ACIDS = 20;
-	int NUM_HIDDEN_UNITS = 26;
+	int NUM_HIDDEN_UNITS = 75;
 	
 	
 	public BaselineNeuralNetwork(ProteinDataSet data) {
@@ -145,6 +145,7 @@ public class BaselineNeuralNetwork {
 	
 	private ArrayList<STRUCTURE> convertProteinStructure(Protein protein) {
 		String structure = protein.getSecondaryStructure();
+		//System.out.println(structure);
 		ArrayList<STRUCTURE> structures = new ArrayList<STRUCTURE>();
 		for (char s : structure.toCharArray()) {
 			switch(s) {
@@ -199,19 +200,31 @@ public class BaselineNeuralNetwork {
 			weights_old.add(0.0);
 		}
 		
+		System.out.println(outputs.size());
+		long curTime = System.currentTimeMillis();
+		
 		int iter = 0;
 		while (squaredSum(weights, weights_old) > TOLERANCE && iter < MAX_ITER) {
 			for(int i = 0; i < outputs.size(); i++){
+			//for(int i = 0; i < 1000; i++){
 				setInputs(inputValues.get(i));
 				feedForward();
 				backPropagateNN(outputs.get(i));
-			}		
+			}
 			weights_old = weights;
 			weights = getWeights(allUnits.size() - 1);
 			iter++;
 		}
-		
+		System.out.println(iter);
+		System.out.println((double)(System.currentTimeMillis() - curTime) / 1000);
 		return allUnits;
+	}
+	
+	private void printWeights(ArrayList<Double> weights) {
+		for(int i = 0; i < weights.size(); i++) {
+			System.out.print(weights.get(i) + " ");
+		}
+		System.out.println();
 	}
 	
 	private void connectGraph(){
