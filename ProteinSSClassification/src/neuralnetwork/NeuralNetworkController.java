@@ -96,6 +96,13 @@ public class NeuralNetworkController {
 				ArrayList<STRUCTURE> outputs){	
 		
 		// Train the system
+		for(int i = 0; i < inputValues.size(); i++) {
+			System.out.print("Value: [");
+			for (int j = 0; j < inputValues.get(0).size(); j++) {
+				System.out.print(inputValues.get(i).get(j) + ", ");
+			}
+			System.out.print("]  Output: " + outputs.get(i) + "\n");
+		}
 	
 		ArrayList<Double> weights = getWeights(allUnits.size() - 1);
 		ArrayList<Double> weights_old = new ArrayList<Double>();
@@ -120,6 +127,13 @@ public class NeuralNetworkController {
 		System.out.println("iters to train: " + iter + 
 				".  final squared sum error: " + squaredSum(weights, weights_old));
 
+		
+		// Train the system
+		System.out.print("Weights: [");
+		for (int j = 0; j < weights.size(); j++) {
+			System.out.print(weights.get(j) + ", ");
+		}
+		System.out.print("] \n");
 		
 		// only return the hidden unit layer
 		return allUnits;

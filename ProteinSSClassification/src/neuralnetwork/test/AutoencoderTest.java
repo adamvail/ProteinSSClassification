@@ -25,6 +25,10 @@ public class AutoencoderTest {
 		pdata.addProteinToTrain(new Protein("Y", "h"));
 		pdata.addProteinToTrain(new Protein("F", "e"));
 		pdata.addProteinToTrain(new Protein("A", "-"));
+		
+		pdata.addProteinToTrain(new Protein("AA", "--"));
+		pdata.addProteinToTrain(new Protein("YY", "hh"));
+		pdata.addProteinToTrain(new Protein("FF", "ee"));
 		/*
 		pdata.addProteinToTrain(new Protein("F", "e"));
 		pdata.addProteinToTrain(new Protein("Y", "h"));
@@ -66,7 +70,7 @@ public class AutoencoderTest {
 		ArrayList<ArrayList<Double>> newData = controller.feedDataThroughNetwork();  // Outputs of hidden layer
 
 		System.out.println("\nHidden layer 10");		
-		controller.learnHiddenLayer(2);
+		controller.learnHiddenLayer(10);
 		
 		//controller.getMostRecentLayer().printHiddenWeightsFromInput(0);
 		//controller.getMostRecentLayer().printHiddenWeightsFromInput(1);

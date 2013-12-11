@@ -189,6 +189,7 @@ public class AutoencoderController {
 		ArrayList<ArrayList<Double>> newData = feedDataThroughNetwork();
 			
 		ArrayList<ArrayList<Unit>> autoEncoder = layerController.autoencoderLearn(newData);
+		//autoEncoder = layerController.autoencoderLearn(newData);
 		mostRecentLayer = layerController;
 		clearOutputConnections(autoEncoder.get(1));
 		network.add(autoEncoder.get(1));	
