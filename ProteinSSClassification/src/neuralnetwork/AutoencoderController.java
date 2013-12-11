@@ -14,7 +14,7 @@ public class AutoencoderController {
 	ArrayList<STRUCTURE> structures;
 	public ArrayList<ArrayList<Unit>> network = new ArrayList<ArrayList<Unit>>();
 	NeuralNetworkController mostRecentLayer;
-	final int windowSize = 13;
+	final int windowSize = 3;
 	final int NUM_AMINO_ACIDS = 20;
 	
 	public NeuralNetworkController getMostRecentLayer() {

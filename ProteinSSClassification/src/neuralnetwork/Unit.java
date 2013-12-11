@@ -42,13 +42,16 @@ public class Unit {
 	public void calculateOutputValue(){
 		double inputSum = 0;
 		for(Unit in : inputs.keySet()){
-			inputSum += in.getValue() * inputs.get(in);
+			double inputValue = in.getValue();
+			double inputWeight = inputs.get(in);
+			double result = inputValue * inputWeight;
+			inputSum += result;
 		}
 		value = sigmoid(inputSum);
 	}
 	
 	private double sigmoid(double inputSum){
-		return 1 / (1 + Math.exp(-1 * inputSum));
+		return 1.0 / (1.0 + Math.exp(-1 * inputSum));
 	}
 	
 	public void addInput(Unit input, double weight){

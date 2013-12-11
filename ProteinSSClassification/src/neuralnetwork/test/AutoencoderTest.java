@@ -18,7 +18,7 @@ public class AutoencoderTest {
 	@Test
 	public void test() {
 		
-		testFeedForward();
+		//testFeedForward();
 		
 		System.out.println("Test 2-layer autoencoder controller");
 		ProteinDataSet pdata = new ProteinDataSet();
@@ -49,6 +49,8 @@ public class AutoencoderTest {
 				
 		AutoencoderController controller = new AutoencoderController(pdata);
 	
+		// Print the input values to the console
+		
 		System.out.println("\nHidden layer 1");
 		controller.learnInitialLayer(10);
 		for (ArrayList<Double> d: controller.getProcessedData()) {
