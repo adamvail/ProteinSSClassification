@@ -2,6 +2,7 @@ package classification;
 
 import java.util.ArrayList;
 
+import baseline.BaselineNeuralNetwork;
 import neuralnetwork.NeuralNetworkController;
 import neuralnetwork.Unit;
 import dataprocessing.CrossValidation;
@@ -11,7 +12,8 @@ import dataprocessing.ProteinDataSet;
 public class ProteinSSClassification {
 	
 	public ProteinSSClassification(String filename){
-		//ArrayList<ProteinDataSet> data = CrossValidation.processData(crossValidationDegree, filename);
+		ArrayList<ProteinDataSet> data = CrossValidation.processData(crossValidationDegree, filename);
+		//runBaseline(data);
 
 		//printDataSets(data);
 		
@@ -31,6 +33,21 @@ public class ProteinSSClassification {
 		
 	//	ArrayList<Unit> hiddenLayer1 = controller.autoencoderLearn(d1);
 	//	ArrayList<Unit> hiddenLayer2 = controller.autoencoderLearn(d1);
+		ProteinDataSet reformedData = new ProteinDataSet();
+		reformedData.addProteinToTrain(data.get(0).getTrain().get(0));
+		reformedData.addProteinToTest(data.get(0).getTrain().get(0));
+		ArrayList<ProteinDataSet> d = new ArrayList<ProteinDataSet>();
+		d.add(reformedData);
+		
+		runBaseline(d);
+	 
+	}
+	
+	public void runBaseline(ArrayList<ProteinDataSet> data) {
+		for(ProteinDataSet proteins : data) {
+			//System.out.println("\n" + proteins.getTrain().size());
+			BaselineNeuralNetwork nn = new BaselineNeuralNetwork(proteins);
+		}
 	}
 	
 
@@ -49,7 +66,6 @@ public class ProteinSSClassification {
 		}
 		
 		ProteinSSClassification classification = new ProteinSSClassification(args[0]);
-
 	}
 	
 	public void printDataSets(ArrayList<ProteinDataSet> dataSets){
