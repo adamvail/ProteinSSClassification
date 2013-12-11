@@ -55,7 +55,9 @@ public class NeuralNetworkController {
 		ArrayList<Double> weights = new ArrayList<Double>();
 	
 		for (int j = 0; j <allUnits.get(layer).size(); j++) {
-			weights.addAll(allUnits.get(layer).get(j).getWeights());
+			for(int i = 0; i < allUnits.get(layer - 1).size(); i++) {
+				weights.add(allUnits.get(layer).get(j).getWeight(allUnits.get(layer - 1).get(i)));
+			}
 		}
 		
 		return weights;

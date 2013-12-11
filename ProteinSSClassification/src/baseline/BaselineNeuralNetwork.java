@@ -22,11 +22,11 @@ public class BaselineNeuralNetwork {
 	final int OUTPUT_LAYER_SIZE = 3;
 	
 	final double TOLERANCE = 1e-7;
-	final int MAX_ITER = 500;
+	final int MAX_ITER = 10;
 	
 	int windowSize = 13;
 	final int NUM_AMINO_ACIDS = 20;
-	int NUM_HIDDEN_UNITS = 75;
+	int NUM_HIDDEN_UNITS = 50;
 	
 	
 	public BaselineNeuralNetwork(ProteinDataSet data) {

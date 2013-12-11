@@ -12,6 +12,20 @@ public class CrossValidation {
 		return crossValidation(degree, readData(filename));
 	}
 	
+	public static ArrayList<ProteinDataSet> processData(String trainName, String testName) {
+		ArrayList<ProteinDataSet> data = new ArrayList<ProteinDataSet>();
+		ProteinDataSet dataSet = new ProteinDataSet();
+		
+		ArrayList<Protein> train = new ArrayList<Protein>();
+		train.addAll(readData(trainName).subList(0, 50));
+		
+		dataSet.addProteinListToTrain(train);
+		dataSet.addProteinListToTest(readData(testName));
+		
+		data.add(dataSet);
+		return data;
+	}
+	
 	private static ArrayList<ProteinDataSet> crossValidation(int degree, ArrayList<Protein> proteins){
 		
 		ArrayList<ProteinDataSet> fullDataSet = new ArrayList<ProteinDataSet>();

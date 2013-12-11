@@ -3,20 +3,26 @@ package classification;
 import java.util.ArrayList;
 
 import baseline.BaselineNeuralNetwork;
-import neuralnetwork.NeuralNetworkController;
-import neuralnetwork.Unit;
 import dataprocessing.CrossValidation;
 import dataprocessing.Protein;
 import dataprocessing.ProteinDataSet;
 
 public class ProteinSSClassification {
 	
-	public ProteinSSClassification(String filename){
-		ArrayList<ProteinDataSet> data = CrossValidation.processData(crossValidationDegree, filename);
-		//runBaseline(data);
+	public ProteinSSClassification(String filename, String testFilename){
+		ArrayList<ProteinDataSet> data;
+		if(testFilename == null) {
+			data = CrossValidation.processData(crossValidationDegree, filename);
+		}
+		else {
+			System.out.println("Using UCI data");
+			data = CrossValidation.processData(filename, testFilename);
+		}
+		
+		runBaseline(data);
 
 		//printDataSets(data);
-		
+/*		
 		ArrayList<ArrayList<Double>> d1 = new ArrayList<ArrayList<Double>>();
 		d1.add(new ArrayList<Double>());
 		d1.get(0).add(1.0);
@@ -39,8 +45,8 @@ public class ProteinSSClassification {
 		ArrayList<ProteinDataSet> d = new ArrayList<ProteinDataSet>();
 		d.add(reformedData);
 		
-		runBaseline(d);
-	 
+		//runBaseline(d);
+*/	 
 	}
 	
 	public void runBaseline(ArrayList<ProteinDataSet> data) {
@@ -65,18 +71,27 @@ public class ProteinSSClassification {
 			System.exit(1);
 		}
 		
-		ProteinSSClassification classification = new ProteinSSClassification(args[0]);
+		ProteinSSClassification classification;
+		
+		if(args[1].equalsIgnoreCase("none")) {
+			classification = new ProteinSSClassification(args[0], null);
+		}
+		else {
+			classification = new ProteinSSClassification(args[0], args[1]);
+		}
+		
+		
 	}
 	
 	public void printDataSets(ArrayList<ProteinDataSet> dataSets){
 		for(ProteinDataSet ds : dataSets){
 			for(Protein p : ds.getTrain()){
-				System.out.println(p.getName());
+				System.out.println(p.getSequence());
 			}
 			System.out.println("\n");
 			
 			for(Protein p : ds.getTest()){
-				System.out.println(p.getName());
+				System.out.println(p.getSequence());
 			}
 			
 			System.out.println("------------------------------\n");
