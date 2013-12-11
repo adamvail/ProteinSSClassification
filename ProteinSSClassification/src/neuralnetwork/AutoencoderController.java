@@ -1,18 +1,18 @@
 package neuralnetwork;
 
 import java.util.ArrayList;
+import java.util.Collection;
 
 import neuralnetwork.NeuralNetworkController.STRUCTURE;
-
 import dataprocessing.Protein;
 import dataprocessing.ProteinDataSet;
 
 public class AutoencoderController {
 
 	ProteinDataSet data;
-	ArrayList<ArrayList<Double>> processedData;
+	public ArrayList<ArrayList<Double>> processedData;
 	ArrayList<STRUCTURE> structures;
-	ArrayList<ArrayList<Unit>> network = new ArrayList<ArrayList<Unit>>();
+	public ArrayList<ArrayList<Unit>> network = new ArrayList<ArrayList<Unit>>();
 	NeuralNetworkController mostRecentLayer;
 	final int windowSize = 13;
 	final int NUM_AMINO_ACIDS = 20;
@@ -24,7 +24,6 @@ public class AutoencoderController {
 	public ArrayList<ArrayList<Double>> getProcessedData() {
 		return processedData;
 	}
-	
 	
 	public AutoencoderController(ProteinDataSet data){
 		this.data = data;
@@ -260,6 +259,56 @@ public class AutoencoderController {
 		}
 		System.out.println("Percentage correct: " + (correct / procData.size()) * 100);
 	}
+	
+	
+	private double getAngle(Object[] a, Object[] b) {
+		// Assume these are same size
+		double lengthSquaredA = 0;
+		double lengthSquaredB = 0;
+		double dotProduct = 0;
+		for (int i = 0; i < a.length; i++) {
+			lengthSquaredA += (Double)a[i] * (Double)a[i];
+			lengthSquaredB += (Double)b[i] * (Double)b[i];
+			dotProduct += (Double)a[i]*(Double)b[i];
+		}
+		return Math.acos(dotProduct / Math.sqrt(lengthSquaredA * lengthSquaredB));
+	}
+	
+	// These should be basically orthogonal.  If not, we've got problems!
+	public void printOrthogonalityOfWeights(int layer) {
+		if (layer <= 0 || layer >= network.size()){
+			System.out.println("Invalid layer");			
+		}
+		System.out.println("cos(theta) between input weight vectors between unit _ and _ in layer " + layer);
+		for (int i = 0; i < network.get(layer).size(); i++) {
+			for (int j = i+1; j < network.get(layer).size(); j++) {
+				System.out.println("   " + i + " and " + j + ":  " + getAngle(network.get(layer).get(i).getWeights().toArray(),
+						network.get(layer).get(j).getWeights().toArray()));
+			}
+		}		
+	}
+	
+	// These should be basically orthogonal.  If not, we've got problems!
+	public void printOrthogonalityOfHiddenWeightsToSelectedInputUnits(Integer[] inputUnits) {
+		int layer = 1;
+		System.out.println("cos(theta) between input weight vectors between unit _ and _ in layer " + layer);
+		for (int i = 0; i < network.get(layer).size(); i++) {
+			Object[] aRaw = network.get(layer).get(i).getWeights().toArray();
+			Double[] a = new Double[inputUnits.length];
+			for (int k = 0; k < inputUnits.length; k++) {
+				a[k] = (Double)aRaw[inputUnits[k]];				
+			}
+			for (int j = i+1; j < network.get(layer).size(); j++) {
+				Object[] bRaw = network.get(layer).get(j).getWeights().toArray();
+				Double[] b = new Double[inputUnits.length];
+				for (int k = 0; k < inputUnits.length; k++) {
+					b[k] = (Double)bRaw[inputUnits[k]];				
+				}
+				System.out.println("   " + i + " and " + j + ":  " + getAngle(a,b));
+			}
+		}		
+	}
+	
 	
 	public void testAllTrainingData() {
 		double correct = 0;

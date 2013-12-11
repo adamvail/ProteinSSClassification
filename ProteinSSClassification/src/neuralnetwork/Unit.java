@@ -56,14 +56,14 @@ public class Unit {
 	
 	public void addInput(Unit input){
 		// get a random double between -1 and 1
-		double randomWeight = (Math.random() * 2) - 1;
+		double randomWeight = (Math.random() * .2) - .1;
 		this.inputs.put(input, randomWeight);
 	}
 	
 	public void addAllInput(Collection<Unit> inputs){
 		for(Unit u : inputs){
 			// get a random double between -1 and 1
-			double randomWeight = (Math.random() * 2) - 1;
+			double randomWeight = (Math.random() * .2) - .1;
 			this.inputs.put(u, randomWeight);
 		}
 	}
@@ -74,7 +74,7 @@ public class Unit {
 	
 	public void addOutput(Unit output){
 		// get a random double between -1 and 1
-		double randomWeight = (Math.random() * 2) - 1;
+		double randomWeight = (Math.random() * .2) - .1;
 		this.outputs.put(output, randomWeight);
 	}
 	
