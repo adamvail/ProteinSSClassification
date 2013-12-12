@@ -17,6 +17,7 @@ public class AutoencoderController {
 	ArrayList<STRUCTURE> structures;
 	public ArrayList<ArrayList<Unit>> network = new ArrayList<ArrayList<Unit>>();
 	NeuralNetworkController mostRecentLayer;
+	BufferedWriter outputFile = null;
 
 	int windowSize = 13;
 
@@ -30,13 +31,25 @@ public class AutoencoderController {
 		return processedData;
 	}
 	
-	public AutoencoderController(ProteinDataSet data){
+	public AutoencoderController(ProteinDataSet data, BufferedWriter outputFile){
 		this.data = data;
+		this.outputFile = outputFile;
 	}
 	
-	public AutoencoderController(ProteinDataSet data, int windowSize){
+	public AutoencoderController(ProteinDataSet data, int windowSize, BufferedWriter outputFile){
 		this.data = data;
 		this.windowSize = windowSize;
+		this.outputFile = outputFile;
+	}
+	
+	public void writeOutput(String output) {
+		if(outputFile != null){
+			try {
+				outputFile.write(output);
+			} catch (IOException e) {
+				
+			}
+		}
 	}
 	
 	private void initializeInputs(){
@@ -151,13 +164,15 @@ public class AutoencoderController {
 		}
 	}
 	
-	public void learnInitialLayer(int hiddenLayerSize){
+	public void learnInitialLayer(int hiddenLayerSize, int iterations){
 		ArrayList<Unit> inputLayer = new ArrayList<Unit>();
 		for (int i = 0; i < windowSize * 20; i++) {
 			inputLayer.add(new Unit(false));
 		}
 		initializeInputs();
-		NeuralNetworkController layerController = new NeuralNetworkController(inputLayer, hiddenLayerSize);
+		NeuralNetworkController layerController = 
+				new NeuralNetworkController(inputLayer, hiddenLayerSize, outputFile);
+		layerController.setMaxIterations(iterations);
 	
 		ArrayList<ArrayList<Unit>> autoEncoder = layerController.autoencoderLearn(processedData);
 		mostRecentLayer = layerController;
@@ -192,9 +207,10 @@ public class AutoencoderController {
 		return newData;
 	}
 	
-	public void learnHiddenLayer(int hiddenLayerSize) {
+	public void learnHiddenLayer(int hiddenLayerSize, int iterations) {
 		NeuralNetworkController layerController = new 
-				NeuralNetworkController(network.get(network.size() - 1), hiddenLayerSize);
+				NeuralNetworkController(network.get(network.size() - 1), hiddenLayerSize, outputFile);
+		layerController.setMaxIterations(iterations);
 		
 		ArrayList<ArrayList<Double>> newData = feedDataThroughNetwork();
 			
@@ -205,9 +221,10 @@ public class AutoencoderController {
 		network.add(autoEncoder.get(1));	
 	}
 	
-	public void learnOutputLayer() {
+	public void learnOutputLayer(int iterations) {
 		NeuralNetworkController layerController = new 
-				NeuralNetworkController(network.get(network.size() - 1));
+				NeuralNetworkController(network.get(network.size() - 1), outputFile);
+		layerController.setMaxIterations(iterations);
 		
 		ArrayList<ArrayList<Double>> newData = feedDataThroughNetwork();
 		
@@ -222,12 +239,19 @@ public class AutoencoderController {
 		int winner = -1;
 		
 		for(int i = 0; i < network.get(network.size() - 1).size(); i++){
+			System.out.print(network.get(network.size() - 1).get(i).getValue() + " ");
+			
+			writeOutput(network.get(network.size() - 1).get(i).getValue() + " ");
+			
 			Unit output = network.get(network.size() - 1).get(i);
 			if(output.getValue() > highestOutput){
 				highestOutput = output.getValue();
 				winner = i;
 			}
 		}
+		
+		writeOutput("\n");
+		System.out.println();
 		
 		switch(winner){
 		case 0:
@@ -251,15 +275,21 @@ public class AutoencoderController {
 		}
 	}
 	
-	public void runTestSet(BufferedWriter outputFile) {
+	public void runTestSet() {
 		ArrayList<ArrayList<Double>> procData = new ArrayList<ArrayList<Double>>();
-		ArrayList<STRUCTURE> structs = new ArrayList<STRUCTURE>();
+		ArrayList<STRUCTURE> structs = new ArrayList<STRUCTURE>();		
 		
 		initializeTestData(procData, structs);
 		double correct = 0;
 		double incorrect = 0;
 		for(int i = 0; i < procData.size(); i++){
 			STRUCTURE prediction = classifyDeepNetwork(procData.get(i));
+			System.out.println("Prediction: " + prediction.toString() + "  Actual: " + structures.get(i).toString());
+			try {
+				outputFile.write("Prediction: " + prediction.toString() + "  Actual: " + structures.get(i).toString() + "\n\n");
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
 			if(prediction == structs.get(i)){
 				correct++;
 				//System.out.println("CORRECT");
@@ -269,13 +299,10 @@ public class AutoencoderController {
 			}
 		}
 		System.out.println("Percentage correct: " + (correct / procData.size()) * 100);
-		try {
-			if(outputFile != null){
-				outputFile.write("Percentage correct: " + (correct / procData.size()) * 100);
-			}
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
+			
+		writeOutput("Percentage correct: " + (correct / procData.size()) * 100 + "\n\n");
+			
+		
 	}
 	
 	

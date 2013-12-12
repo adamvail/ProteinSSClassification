@@ -1,5 +1,7 @@
 package neuralnetwork;
 
+import java.io.BufferedWriter;
+import java.io.IOException;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
 
@@ -13,20 +15,38 @@ public class NeuralNetworkController {
 	final int OUTPUT_LAYER_SIZE = 3;
 	
 	final double TOLERANCE = 1.0e-16;
-	int MAX_ITER = 10000;
+	int MAX_ITER = 10;
+	
+	BufferedWriter outputFile = null;
 			
 	// Input is size of each layer of units.  Ex: 17 5 3
-	public NeuralNetworkController(ArrayList<Unit> inputLayer, int hiddenLayerSize){	
+	public NeuralNetworkController(ArrayList<Unit> inputLayer, int hiddenLayerSize, BufferedWriter outputFile){	
+		this.outputFile = outputFile;
 		allUnits.add(inputLayer);
 		createLayer(hiddenLayerSize, false);
 		createLayer(inputLayer.size(), true);
 		connectGraph();
 	}
 	
-	public NeuralNetworkController(ArrayList<Unit> inputLayer){
+	public NeuralNetworkController(ArrayList<Unit> inputLayer, BufferedWriter outputFile){
+		this.outputFile = outputFile;
 		allUnits.add(inputLayer);
 		createLayer(OUTPUT_LAYER_SIZE, true);
 		connectGraph();
+	}
+	
+	public void writeOutput(String output) {
+		if(outputFile != null){
+			try {
+				outputFile.write(output);
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+		}
+	}
+	
+	public void setMaxIterations(int iterations) {
+		this.MAX_ITER = iterations;
 	}
 	
 	public ArrayList<Double> testHiddenLayer(ArrayList<Double> inputValues) {
@@ -97,6 +117,8 @@ public class NeuralNetworkController {
 		}
 		System.out.println("iters to train: " + iter + 
 				".  final squared sum error: " + squaredSum(weights, weights_old));
+		writeOutput("iters to train: " + iter + 
+				".  final squared sum error: " + squaredSum(weights, weights_old) + "\n");
 
 		// only return the hidden unit layer
 		return allUnits;
@@ -137,6 +159,8 @@ public class NeuralNetworkController {
 		
 		System.out.println("iters to train: " + iter + 
 				".  final squared sum error: " + squaredSum(weights, weights_old));
+		writeOutput("iters to train: " + iter + 
+				".  final squared sum error: " + squaredSum(weights, weights_old) + "\n");
 
 		
 		// Train the system
