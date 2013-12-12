@@ -1,5 +1,7 @@
 package baseline;
 
+import java.io.BufferedWriter;
+import java.io.IOException;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
 
@@ -28,10 +30,21 @@ public class BaselineNeuralNetwork {
 	final int NUM_AMINO_ACIDS = 20;
 	int NUM_HIDDEN_UNITS = 50;
 	
+	BufferedWriter outputFile = null;
 	
-	public BaselineNeuralNetwork(ProteinDataSet data) {
+	public BaselineNeuralNetwork(ProteinDataSet data, BufferedWriter outputFile) {
 		this.data = data;
 		runNN();
+	}
+	
+	public void writeOutput(String output) {
+		if(outputFile != null){
+			try {
+				outputFile.write(output);
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+		}
 	}
 	
 	private void runNN() {
@@ -350,12 +363,15 @@ public class BaselineNeuralNetwork {
 		int winner = -1;
 		
 		for(int i = 0; i < allUnits.get(allUnits.size() - 1).size(); i++){
+			writeOutput(allUnits.get(allUnits.size() - 1).get(i).getValue() + " ");
+
 			Unit output = allUnits.get(allUnits.size() - 1).get(i);
 			if(output.getValue() > highestOutput){
 				highestOutput = output.getValue();
 				winner = i;
 			}
 		}
+		writeOutput("\n");
 		
 		switch(winner){
 		case 0:
@@ -386,13 +402,15 @@ public class BaselineNeuralNetwork {
 			setInputs(processedTestData.get(i));
 			feedForward();
 			STRUCTURE output = convertOutputsToStructure();
+			writeOutput("Prediction: " + output.toString() + "  Actual: " + testStructures.get(i).toString() + "\n\n");
 			if(output == testStructures.get(i)) {
 				correct++;
 			}
 		}
 		
 		// The classification is done winner take all
-		System.out.println("Accuracy: " + (correct / processedTestData.size()) * 100);		
+		System.out.println("Accuracy: " + (correct / processedTestData.size()) * 100);
+		writeOutput("Accuracy: " + (correct / processedTestData.size()) * 100 + "\n");
 	}
 	
 	public enum STRUCTURE {

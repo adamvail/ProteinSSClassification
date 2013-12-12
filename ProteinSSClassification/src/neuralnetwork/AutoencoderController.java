@@ -285,11 +285,8 @@ public class AutoencoderController {
 		for(int i = 0; i < procData.size(); i++){
 			STRUCTURE prediction = classifyDeepNetwork(procData.get(i));
 			System.out.println("Prediction: " + prediction.toString() + "  Actual: " + structures.get(i).toString());
-			try {
-				outputFile.write("Prediction: " + prediction.toString() + "  Actual: " + structures.get(i).toString() + "\n\n");
-			} catch (IOException e) {
-				e.printStackTrace();
-			}
+			writeOutput("Prediction: " + prediction.toString() + "  Actual: " + structures.get(i).toString() + "\n\n");
+			
 			if(prediction == structs.get(i)){
 				correct++;
 				//System.out.println("CORRECT");

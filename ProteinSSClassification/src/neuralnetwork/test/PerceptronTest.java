@@ -22,7 +22,7 @@ public class PerceptronTest {
 		for (int i = 0; i < 6; i++) {
 			inputLayer.add(new Unit(false));
 		}
-		NeuralNetworkController net = new NeuralNetworkController(inputLayer);
+		NeuralNetworkController net = new NeuralNetworkController(inputLayer, null);
 
 		// Input: exactly 1 unit turned on
 		// Teach: alpha if units 0/1 turned on, beta if units 2/3 turned on, loop

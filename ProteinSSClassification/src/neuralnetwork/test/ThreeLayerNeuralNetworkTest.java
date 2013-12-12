@@ -17,7 +17,7 @@ public class ThreeLayerNeuralNetworkTest {
 		for (int i = 0; i < 6; i++) {
 			inputLayer.add(new Unit(false));
 		}
-		NeuralNetworkController netAE = new NeuralNetworkController(inputLayer, 5);
+		NeuralNetworkController netAE = new NeuralNetworkController(inputLayer, 5, null);
 
 		// Input: exactly 1 unit turned on
 		// Teach: alpha if units 0/1 turned on, beta if units 2/3 turned on,
@@ -77,7 +77,7 @@ public class ThreeLayerNeuralNetworkTest {
 		}
 		 
 		// Train the system
-		NeuralNetworkController net = new NeuralNetworkController(outAE.get(1));
+		NeuralNetworkController net = new NeuralNetworkController(outAE.get(1), null);
 		ArrayList<ArrayList<Double>> fedData = new ArrayList<ArrayList<Double>>();
 		for(ArrayList<Double> d : data) {
 			fedData.add(netAE.testHiddenLayer(d));
