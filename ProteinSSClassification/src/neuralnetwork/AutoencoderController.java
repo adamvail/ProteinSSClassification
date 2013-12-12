@@ -1,7 +1,10 @@
 package neuralnetwork;
 
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Collection;
 
 import neuralnetwork.NeuralNetworkController.STRUCTURE;
 import dataprocessing.Protein;
@@ -14,7 +17,7 @@ public class AutoencoderController {
 	ArrayList<STRUCTURE> structures;
 	public ArrayList<ArrayList<Unit>> network = new ArrayList<ArrayList<Unit>>();
 	NeuralNetworkController mostRecentLayer;
-	final int windowSize = 13;
+	int windowSize = 13;
 	final int NUM_AMINO_ACIDS = 20;
 	
 	public NeuralNetworkController getMostRecentLayer() {
@@ -27,6 +30,11 @@ public class AutoencoderController {
 	
 	public AutoencoderController(ProteinDataSet data){
 		this.data = data;
+	}
+	
+	public AutoencoderController(ProteinDataSet data, int windowSize){
+		this.data = data;
+		this.windowSize = windowSize;
 	}
 	
 	private void initializeInputs(){
@@ -241,7 +249,7 @@ public class AutoencoderController {
 		}
 	}
 	
-	public void runTestSet() {
+	public void runTestSet(BufferedWriter outputFile) {
 		ArrayList<ArrayList<Double>> procData = new ArrayList<ArrayList<Double>>();
 		ArrayList<STRUCTURE> structs = new ArrayList<STRUCTURE>();
 		
@@ -259,6 +267,13 @@ public class AutoencoderController {
 			}
 		}
 		System.out.println("Percentage correct: " + (correct / procData.size()) * 100);
+		try {
+			if(outputFile != null){
+				outputFile.write("Percentage correct: " + (correct / procData.size()) * 100);
+			}
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
 	}
 	
 	

@@ -13,7 +13,7 @@ public class NeuralNetworkController {
 	final int OUTPUT_LAYER_SIZE = 3;
 	
 	final double TOLERANCE = 1.0e-16;
-	final int MAX_ITER = 10000;
+	int MAX_ITER = 10000;
 			
 	// Input is size of each layer of units.  Ex: 17 5 3
 	public NeuralNetworkController(ArrayList<Unit> inputLayer, int hiddenLayerSize){	
