@@ -212,8 +212,9 @@ public class NeuralNetworkController {
 			allUnits.get(allUnits.size() - 1).get(i).trainWeights(struct[i], LEARNING_RATE);
 		}
 		
+		// handle input units
 		for(int i = 0; i < allUnits.get(0).size(); i++){
-			allUnits.get(0).get(i).trainWeights(null, LEARNING_RATE);
+			allUnits.get(0).get(i).trainInputWeights(null, LEARNING_RATE);
 		}
 	}
 	
@@ -232,7 +233,7 @@ public class NeuralNetworkController {
 		// Doing this for input units only because we need consistent
 		// weights for output units.
 		for(Unit u : allUnits.get(0)){
-			u.trainWeights(null, LEARNING_RATE);
+			u.trainInputWeights(null, LEARNING_RATE);
 		}
 	}
 	

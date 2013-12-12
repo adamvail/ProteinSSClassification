@@ -143,4 +143,17 @@ public class Unit {
 		
 		changeWeights(learningRate);
 	}
+	
+	public void trainInputWeights(Double y, double learningRate){
+		if(outputUnit){
+			// train weights as an output unit
+			calculateOutputUnitError(y);
+		}
+		else {
+			// train weights as a hidden unit
+			calculateHiddenUnitError();
+		}
+		
+		//changeWeights(learningRate);
+	}
 }
