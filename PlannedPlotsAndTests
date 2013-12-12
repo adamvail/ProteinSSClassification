@@ -1,0 +1,29 @@
+* WITHHOLD TEST SET (FOR ROC CURVE) FROM EVERYTHING.
+
+* Baseline study
+  - Different size of hidden layer (1 hidden layer is all)
+  - x-fold cross validation
+
+* Learning curve
+  - Vary number of Hidden layers (**)
+  - Vary Hidden layer size (use baseline study #s)
+  - vs baseline
+
+* ROC curve
+  - for best method (from learning curves) vs baseline.  Use confidence data that we're outputting
+  - TODO: confidence data for baseline
+
+* Accuracy vs # Iterations:  (For 1, 5, 10 iterations)  -- Show that it improves with more iterations, even if it didn't converge.
+
+
+
+* Interesting questions:
+  - what if we vary size of layers (use a decay constant in input or something)?
+  - is it helpful to connect outputs to intermediate layers or inputs?
+
+
+* If we had time (future work):
+  - enforce sparsity on intermediate layers w/
+  - window size?  (this is chosen because it is "standard")
+  - is it helpful to add biases?
+  - ensemble of deep networks (different window sizes)
