@@ -158,23 +158,13 @@ public class AutoencoderController {
 	}
 	
 	private void feedForward(ArrayList<Double> datum) {
-		System.out.print("   Feed forward layer 0 has value = 1 at: [");
 		for(int i = 0; i < datum.size(); i++) {
 			network.get(0).get(i).setValue(datum.get(i));
-			if (Math.abs(datum.get(i) - .99) < 0.01) {
-				System.out.print(i + ", ");
-			} else if (datum.get(i) > 0.01) {
-				System.out.print(i + "(" + datum.get(i) + "), ");
-			}
 		}
-		System.out.print("]\n");
 		for(int i = 1; i < network.size(); i++){
-			System.out.print("   Feed forward layer " + i + ": [");
 			for(Unit u : network.get(i)){
 				u.calculateOutputValue();
-				System.out.print(u.getValue() + ", ");
 			}
-			System.out.print("]\n");
 		}
 	}
 	
@@ -324,12 +314,14 @@ public class AutoencoderController {
 	public void testAllTrainingData() {
 		double correct = 0;
 		double incorrect = 0;
+		System.out.println("\nClassify " + processedData.size() + " instances");
 		for(int i = 0; i < processedData.size(); i++){
 			STRUCTURE prediction = classifyDeepNetwork(processedData.get(i));
 			System.out.println("Prediction: " + prediction.toString() + "  Actual: " + structures.get(i).toString());
 			for (int j = 0; j < network.get(network.size() - 1).size(); j++) {
 				System.out.println("   node " + j + " value: " + network.get(network.size() - 1).get(j).getValue());
 			}
+			System.out.println();
 			if(prediction == structures.get(i)){
 				correct++;
 				//System.out.println("CORRECT");

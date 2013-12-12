@@ -106,13 +106,14 @@ public class NeuralNetworkController {
 				ArrayList<STRUCTURE> outputs){	
 		
 		// Train the system
+		/*
 		for(int i = 0; i < inputValues.size(); i++) {
 			System.out.print("Value: [");
 			for (int j = 0; j < inputValues.get(0).size(); j++) {
 				System.out.print(inputValues.get(i).get(j) + ", ");
 			}
 			System.out.print("]  Output: " + outputs.get(i) + "\n");
-		}
+		}*/
 	
 		ArrayList<Double> weights = getWeights(allUnits.size() - 1);
 		ArrayList<Double> weights_old = new ArrayList<Double>();
@@ -139,6 +140,7 @@ public class NeuralNetworkController {
 
 		
 		// Train the system
+		/*
 		System.out.print("Weights: [");
 		for (int j = 0; j < weights.size(); j++) {
 			System.out.print(weights.get(j) + ", ");
@@ -151,7 +153,7 @@ public class NeuralNetworkController {
 			System.out.print(allUnits.get(allUnits.size()-1).get(0).getValue() + ", " );
 			System.out.print(allUnits.get(allUnits.size()-1).get(1).getValue() + ", " );
 			System.out.print(allUnits.get(allUnits.size()-1).get(2).getValue() + "]\n" );								
-		}	
+		}*/
 		
 		// only return the hidden unit layer
 		return allUnits;
@@ -346,8 +348,7 @@ public class NeuralNetworkController {
 		setInputs(instance);
 		feedForward();
 		
-		// The classification is done winner take all
-		
+		// The classification is done winner take all		
 		return convertOutputsToStructure();
 	}
 	

@@ -29,29 +29,18 @@ public class AutoencoderTest {
 		pdata.addProteinToTrain(new Protein("AA", "--"));
 		pdata.addProteinToTrain(new Protein("YY", "hh"));
 		pdata.addProteinToTrain(new Protein("FF", "ee"));
-		/*
-		pdata.addProteinToTrain(new Protein("F", "e"));
-		pdata.addProteinToTrain(new Protein("Y", "h"));
-		pdata.addProteinToTrain(new Protein("A", "-"));
-		pdata.addProteinToTrain(new Protein("YY", "hh"));
-		pdata.addProteinToTrain(new Protein("FF", "ee"));
-		pdata.addProteinToTrain(new Protein("AA", "--"));
-		pdata.addProteinToTrain(new Protein("F", "e"));
-		pdata.addProteinToTrain(new Protein("A", "-"));
-		pdata.addProteinToTrain(new Protein("Y", "h"));
+		
 		pdata.addProteinToTrain(new Protein("AAAA", "----"));
 		pdata.addProteinToTrain(new Protein("YYYY", "hhhh"));
 		pdata.addProteinToTrain(new Protein("FFFF", "eeee"));
-		pdata.addProteinToTrain(new Protein("Y", "h"));
-		pdata.addProteinToTrain(new Protein("A", "-"));
-		pdata.addProteinToTrain(new Protein("F", "e"));*/
-		//pdata.addProteinToTrain(new Protein("YYF", "hhe"));
+
+		pdata.addProteinToTrain(new Protein("YYF", "hhe"));
 				
 		AutoencoderController controller = new AutoencoderController(pdata);
 	
 		System.out.println("\nHidden layer 1");
 		controller.learnInitialLayer(5);
-		controller.printWeights();
+		//controller.printWeights();
 		for (ArrayList<Double> d: controller.getProcessedData()) {
 			controller.getMostRecentLayer().classifyAutoencoder(d);
 		}
@@ -60,18 +49,18 @@ public class AutoencoderTest {
 		//controller.getMostRecentLayer().printHiddenWeightsFromInput(138);
 		//controller.getMostRecentLayer().printOutputWeightsFromHiddenLayerToOutput(138) ;
 
-		Integer[] inputUnits = new Integer[3];
-		inputUnits[0] = 120;
-		inputUnits[1] = 133;
-		inputUnits[2] = 138;
+		//Integer[] inputUnits = new Integer[3];
+		//inputUnits[0] = 120;
+		//inputUnits[1] = 133;
+		//inputUnits[2] = 138;
 		//controller.printOrthogonalityOfHiddenWeightsToSelectedInputUnits(inputUnits);
 		
 		ArrayList<ArrayList<Double>> newData = controller.feedDataThroughNetwork();  // Outputs of hidden layer
 
 		System.out.println("\nHidden layer 2");		
 		controller.learnHiddenLayer(5);
-		controller.printWeights();
 		
+		//controller.printWeights();		
 		//controller.getMostRecentLayer().printHiddenWeightsFromInput(0);
 		//controller.getMostRecentLayer().printHiddenWeightsFromInput(1);
 		//controller.getMostRecentLayer().printHiddenWeightsFromInput(2);
@@ -83,10 +72,9 @@ public class AutoencoderTest {
 		
 		System.out.println("\nOutput layer");
 		controller.learnOutputLayer();
-		controller.printWeights();
 		
-		//controller.getMostRecentLayer().printOutputWeightsFromHiddenLayer();
-		
+		//controller.printWeights();		
+		//controller.getMostRecentLayer().printOutputWeightsFromHiddenLayer();		
 		//controller.printOrthogonalityOfWeights(3);
 		
 		controller.testAllTrainingData();
@@ -114,7 +102,7 @@ public class AutoencoderTest {
 		pdata.addProteinToTrain(new Protein("FFFF", "eeee"));
 		pdata.addProteinToTrain(new Protein("Y", "h"));
 		pdata.addProteinToTrain(new Protein("A", "-"));
-		pdata.addProteinToTrain(new Protein("F", "e"));
+		pdata.addProteinToTrain(new Protein("F", "e"));		
 				
 		AutoencoderController controller = new AutoencoderController(pdata);
 	
@@ -126,21 +114,18 @@ public class AutoencoderTest {
 		//controller.getMostRecentLayer().printHiddenWeightsFromInput(120);
 		//controller.getMostRecentLayer().printHiddenWeightsFromInput(133);
 		//controller.getMostRecentLayer().printHiddenWeightsFromInput(138);
-
 		//Integer[] inputUnits = new Integer[3];
 		//inputUnits[0] = 120;
 		//inputUnits[1] = 133;
 		//inputUnits[2] = 138;
-		//controller.printOrthogonalityOfHiddenWeightsToSelectedInputUnits(inputUnits);
-		
+		//controller.printOrthogonalityOfHiddenWeightsToSelectedInputUnits(inputUnits);		
 		
 		ArrayList<ArrayList<Double>> newData = controller.feedDataThroughNetwork();
 				
 		System.out.println("\nOutput layer");
 		controller.learnOutputLayer();
 		
-		//controller.getMostRecentLayer().printOutputWeightsFromHiddenLayer();
-		
+		//controller.getMostRecentLayer().printOutputWeightsFromHiddenLayer();		
 		//controller.printOrthogonalityOfWeights(2);
 		
 		controller.testAllTrainingData();		
