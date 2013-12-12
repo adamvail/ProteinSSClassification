@@ -1,7 +1,10 @@
 package neuralnetwork;
 
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Collection;
 
 import neuralnetwork.NeuralNetworkController.STRUCTURE;
 import dataprocessing.Protein;
@@ -14,7 +17,9 @@ public class AutoencoderController {
 	ArrayList<STRUCTURE> structures;
 	public ArrayList<ArrayList<Unit>> network = new ArrayList<ArrayList<Unit>>();
 	NeuralNetworkController mostRecentLayer;
-	final int windowSize = 3;
+
+	int windowSize = 13;
+
 	final int NUM_AMINO_ACIDS = 20;
 	
 	public NeuralNetworkController getMostRecentLayer() {
@@ -27,6 +32,11 @@ public class AutoencoderController {
 	
 	public AutoencoderController(ProteinDataSet data){
 		this.data = data;
+	}
+	
+	public AutoencoderController(ProteinDataSet data, int windowSize){
+		this.data = data;
+		this.windowSize = windowSize;
 	}
 	
 	private void initializeInputs(){
@@ -241,7 +251,7 @@ public class AutoencoderController {
 		}
 	}
 	
-	public void runTestSet() {
+	public void runTestSet(BufferedWriter outputFile) {
 		ArrayList<ArrayList<Double>> procData = new ArrayList<ArrayList<Double>>();
 		ArrayList<STRUCTURE> structs = new ArrayList<STRUCTURE>();
 		
@@ -259,6 +269,13 @@ public class AutoencoderController {
 			}
 		}
 		System.out.println("Percentage correct: " + (correct / procData.size()) * 100);
+		try {
+			if(outputFile != null){
+				outputFile.write("Percentage correct: " + (correct / procData.size()) * 100);
+			}
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
 	}
 	
 	
@@ -314,12 +331,14 @@ public class AutoencoderController {
 	public void testAllTrainingData() {
 		double correct = 0;
 		double incorrect = 0;
+		System.out.println("\nClassify " + processedData.size() + " instances");
 		for(int i = 0; i < processedData.size(); i++){
 			STRUCTURE prediction = classifyDeepNetwork(processedData.get(i));
 			System.out.println("Prediction: " + prediction.toString() + "  Actual: " + structures.get(i).toString());
 			for (int j = 0; j < network.get(network.size() - 1).size(); j++) {
 				System.out.println("   node " + j + " value: " + network.get(network.size() - 1).get(j).getValue());
 			}
+			System.out.println();
 			if(prediction == structures.get(i)){
 				correct++;
 				//System.out.println("CORRECT");
@@ -338,4 +357,50 @@ public class AutoencoderController {
 		
 		return convertOutputsToStructure();
 	}
+	
+	private ArrayList<Double> getWeights(int layer) {
+		ArrayList<Double> weights = new ArrayList<Double>();
+	
+		for (int j = 0; j <network.get(layer).size(); j++) {
+			for(int i = 0; i < network.get(layer - 1).size(); i++) {
+				weights.add(network.get(layer).get(j).getWeight(network.get(layer - 1).get(i)));
+			}
+		}
+		
+		return weights;
+	}
+	
+	public ArrayList<ArrayList<Double>> getAllWeights() {
+		ArrayList<ArrayList<Double>> allWeights = new ArrayList<ArrayList<Double>>();
+		for (int i = 1; i < network.size(); i++) {
+			allWeights.add(getWeights(i));		
+		}
+		return allWeights;
+	}
+	
+	public void printWeights() {
+		ArrayList<ArrayList<Double>> recentlyTrainedNetwork = mostRecentLayer.getAllWeights();
+		
+		ArrayList<ArrayList<Double>> finalNetwork = getAllWeights();
+		
+		// Print the weights
+		System.out.println("\nWEIGHTS of SMALL network trained for layer " + (network.size() - 1));
+		for(int i = 0; i < recentlyTrainedNetwork.size(); i++) {
+			System.out.print("  Layer " + i + ": [");
+			for (int j = 0; j < recentlyTrainedNetwork.get(i).size(); j++) {
+				System.out.print(recentlyTrainedNetwork.get(i).get(j) + ", ");
+			}
+			System.out.print("]\n");
+		}
+		// Print the weights
+		System.out.println("WEIGHTS of FULL trained network so far " + (network.size() - 1));
+		for(int i = 0; i < finalNetwork.size(); i++) {
+			System.out.print("  Layer " + i + ": [");
+			for (int j = 0; j < finalNetwork.get(i).size(); j++) {
+				System.out.print(finalNetwork.get(i).get(j) + ", ");
+			}
+			System.out.print("]\n");
+		}
+	}
+		
 }

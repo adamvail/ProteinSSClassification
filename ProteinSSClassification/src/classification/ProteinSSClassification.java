@@ -1,52 +1,81 @@
 package classification;
 
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Calendar;
 
+import neuralnetwork.AutoencoderController;
 import baseline.BaselineNeuralNetwork;
-import dataprocessing.CrossValidation;
 import dataprocessing.Protein;
 import dataprocessing.ProteinDataSet;
 
 public class ProteinSSClassification {
 	
-	public ProteinSSClassification(String filename, String testFilename){
+	static int crossValidationDegree = 7;
+	
+	public ProteinSSClassification(String filename, String testFilename, int numHiddenLayers, int windowSize,
+			int hiddenLayerSize, String outputDir){
 		ArrayList<ProteinDataSet> data;
+		
+		Calendar c = Calendar.getInstance();
+		String date = c.get(Calendar.YEAR)+"-"+c.get(Calendar.MONTH)+"-"+c.get(Calendar.DAY_OF_MONTH);
+		String time = c.get(Calendar.HOUR_OF_DAY)+":"+c.get(Calendar.MINUTE)+":"+c.get(Calendar.SECOND);
+		String outputFilenameBase = date + "_" + time + "_" + numHiddenLayers + "hl_" + hiddenLayerSize + "hls_" + windowSize + "ws";
+		
+		/*
 		if(testFilename == null) {
-			data = CrossValidation.processData(crossValidationDegree, filename);
+			data = CrossValidation.processData(crossValidationDegree, filename);			
 		}
 		else {
 			System.out.println("Using UCI data");
 			data = CrossValidation.processData(filename, testFilename);
 		}
+		*/
 		
-		runBaseline(data);
+		ProteinDataSet pdata = new ProteinDataSet();
+		pdata.addProteinToTrain(new Protein("Y", "h"));
+		pdata.addProteinToTrain(new Protein("F", "e"));
+		pdata.addProteinToTrain(new Protein("A", "-"));
+		
+		pdata.addProteinToTrain(new Protein("AA", "--"));
+		pdata.addProteinToTrain(new Protein("YY", "hh"));
+		pdata.addProteinToTrain(new Protein("FF", "ee"));
+		
+		pdata.addProteinToTrain(new Protein("AAAA", "----"));
+		pdata.addProteinToTrain(new Protein("YYYY", "hhhh"));
+		pdata.addProteinToTrain(new Protein("FFFF", "eeee"));
 
-		//printDataSets(data);
-/*		
-		ArrayList<ArrayList<Double>> d1 = new ArrayList<ArrayList<Double>>();
-		d1.add(new ArrayList<Double>());
-		d1.get(0).add(1.0);
-		d1.get(0).add(0.0);
-		d1.get(0).add(1.0);
+		pdata.addProteinToTrain(new Protein("YYF", "hhe"));
+		pdata.addProteinListToTest(pdata.getTrain());
 		
-	//	NeuralNetworkController controller = new NeuralNetworkController(3, 5);
+		data = new ArrayList<ProteinDataSet>();
+		data.add(pdata);
 		
-		ArrayList<ArrayList<Double>> d2 = new ArrayList<ArrayList<Double>>();
-		d2.add(new ArrayList<Double>());
-		d2.get(0).add(1.0);
-		d2.get(0).add(0.0);
-		d2.get(0).add(0.0);
-		
-	//	ArrayList<Unit> hiddenLayer1 = controller.autoencoderLearn(d1);
-	//	ArrayList<Unit> hiddenLayer2 = controller.autoencoderLearn(d1);
-		ProteinDataSet reformedData = new ProteinDataSet();
-		reformedData.addProteinToTrain(data.get(0).getTrain().get(0));
-		reformedData.addProteinToTest(data.get(0).getTrain().get(0));
-		ArrayList<ProteinDataSet> d = new ArrayList<ProteinDataSet>();
-		d.add(reformedData);
-		
-		//runBaseline(d);
-*/	 
+		int iter = 1;
+		// Loop through all our data with the given parameters
+		for(ProteinDataSet d : data) {
+			AutoencoderController controller = new AutoencoderController(d, windowSize);
+			controller.learnInitialLayer(hiddenLayerSize);
+			for(int i = 0; i < numHiddenLayers; i++) {
+				controller.learnHiddenLayer(hiddenLayerSize);
+			}
+			controller.learnOutputLayer();
+			
+			// set up the output file
+			BufferedWriter outputFile = null;
+			try {
+				outputFile = new BufferedWriter(new FileWriter(new File(outputDir, outputFilenameBase + "_" + iter )));
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+
+			controller.runTestSet(outputFile);
+			iter++;
+		}
+		 
 	}
 	
 	public void runBaseline(ArrayList<ProteinDataSet> data) {
@@ -54,10 +83,7 @@ public class ProteinSSClassification {
 			//System.out.println("\n" + proteins.getTrain().size());
 			BaselineNeuralNetwork nn = new BaselineNeuralNetwork(proteins);
 		}
-	}
-	
-
-	static int crossValidationDegree = 7;
+	}	
 	
 	/**
 	 * @param args
@@ -66,18 +92,28 @@ public class ProteinSSClassification {
 		// Here is the start of our protein secondary
 		// structure classification project
 		
-		if(args.length != 2){
-			System.out.println("Usage: ./ProteinSSClassification <protein train> <protein test>");
+		if(args.length != 6){
+			System.out.println("Usage: ./ProteinSSClassification <protein train> <protein test> " + 
+						"<window size> <number of hidden layers> <hidden layer size> <output directory>");
 			System.exit(1);
 		}
 		
+		String trainFilename = args[0];
+		String testFilename = args[1];
+		int windowSize = Integer.parseInt(args[2]);
+		int numHiddenLayers = Integer.parseInt(args[3]);
+		int hiddenLayerSize = Integer.parseInt(args[4]);
+		String outputDir = args[5];
+		
 		ProteinSSClassification classification;
 		
-		if(args[1].equalsIgnoreCase("none")) {
-			classification = new ProteinSSClassification(args[0], null);
+		if(testFilename.equalsIgnoreCase("none")) {
+			classification = new ProteinSSClassification(trainFilename, null, windowSize, 
+					numHiddenLayers, hiddenLayerSize, outputDir);
 		}
 		else {
-			classification = new ProteinSSClassification(args[0], args[1]);
+			classification = new ProteinSSClassification(trainFilename, testFilename, windowSize, 
+					numHiddenLayers, hiddenLayerSize, outputDir);
 		}
 		
 		

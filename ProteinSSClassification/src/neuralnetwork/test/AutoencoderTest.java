@@ -29,51 +29,40 @@ public class AutoencoderTest {
 		pdata.addProteinToTrain(new Protein("AA", "--"));
 		pdata.addProteinToTrain(new Protein("YY", "hh"));
 		pdata.addProteinToTrain(new Protein("FF", "ee"));
-		/*
-		pdata.addProteinToTrain(new Protein("F", "e"));
-		pdata.addProteinToTrain(new Protein("Y", "h"));
-		pdata.addProteinToTrain(new Protein("A", "-"));
-		pdata.addProteinToTrain(new Protein("YY", "hh"));
-		pdata.addProteinToTrain(new Protein("FF", "ee"));
-		pdata.addProteinToTrain(new Protein("AA", "--"));
-		pdata.addProteinToTrain(new Protein("F", "e"));
-		pdata.addProteinToTrain(new Protein("A", "-"));
-		pdata.addProteinToTrain(new Protein("Y", "h"));
+		
 		pdata.addProteinToTrain(new Protein("AAAA", "----"));
 		pdata.addProteinToTrain(new Protein("YYYY", "hhhh"));
 		pdata.addProteinToTrain(new Protein("FFFF", "eeee"));
-		pdata.addProteinToTrain(new Protein("Y", "h"));
-		pdata.addProteinToTrain(new Protein("A", "-"));
-		pdata.addProteinToTrain(new Protein("F", "e"));*/
-		//pdata.addProteinToTrain(new Protein("YYF", "hhe"));
+
+		pdata.addProteinToTrain(new Protein("YYF", "hhe"));
 				
 		AutoencoderController controller = new AutoencoderController(pdata);
 	
 		// Print the input values to the console
 		
 		System.out.println("\nHidden layer 1");
-		controller.learnInitialLayer(10);
+		controller.learnInitialLayer(5);
+		//controller.printWeights();
 		for (ArrayList<Double> d: controller.getProcessedData()) {
 			controller.getMostRecentLayer().classifyAutoencoder(d);
 		}
-		controller.getMostRecentLayer().printHiddenWeightsFromInput(120);
-		controller.getMostRecentLayer().printHiddenWeightsFromInput(133);
-		controller.getMostRecentLayer().printHiddenWeightsFromInput(138);
-		controller.getMostRecentLayer().printOutputWeightsFromHiddenLayerToOutput(138) ;
+		//controller.getMostRecentLayer().printHiddenWeightsFromInput(120);
+		//controller.getMostRecentLayer().printHiddenWeightsFromInput(133);
+		//controller.getMostRecentLayer().printHiddenWeightsFromInput(138);
+		//controller.getMostRecentLayer().printOutputWeightsFromHiddenLayerToOutput(138) ;
 
-		Integer[] inputUnits = new Integer[3];
-		inputUnits[0] = 120;
-		inputUnits[1] = 133;
-		inputUnits[2] = 138;
+		//Integer[] inputUnits = new Integer[3];
+		//inputUnits[0] = 120;
+		//inputUnits[1] = 133;
+		//inputUnits[2] = 138;
 		//controller.printOrthogonalityOfHiddenWeightsToSelectedInputUnits(inputUnits);
-
-		
 		
 		ArrayList<ArrayList<Double>> newData = controller.feedDataThroughNetwork();  // Outputs of hidden layer
 
-		System.out.println("\nHidden layer 10");		
-		controller.learnHiddenLayer(10);
+		System.out.println("\nHidden layer 2");		
+		controller.learnHiddenLayer(5);
 		
+		//controller.printWeights();		
 		//controller.getMostRecentLayer().printHiddenWeightsFromInput(0);
 		//controller.getMostRecentLayer().printHiddenWeightsFromInput(1);
 		//controller.getMostRecentLayer().printHiddenWeightsFromInput(2);
@@ -86,9 +75,9 @@ public class AutoencoderTest {
 		System.out.println("\nOutput layer");
 		controller.learnOutputLayer();
 		
-		controller.getMostRecentLayer().printOutputWeightsFromHiddenLayer();
-		
-		controller.printOrthogonalityOfWeights(3);
+		//controller.printWeights();		
+		//controller.getMostRecentLayer().printOutputWeightsFromHiddenLayer();		
+		//controller.printOrthogonalityOfWeights(3);
 		
 		controller.testAllTrainingData();
 		
@@ -115,7 +104,7 @@ public class AutoencoderTest {
 		pdata.addProteinToTrain(new Protein("FFFF", "eeee"));
 		pdata.addProteinToTrain(new Protein("Y", "h"));
 		pdata.addProteinToTrain(new Protein("A", "-"));
-		pdata.addProteinToTrain(new Protein("F", "e"));
+		pdata.addProteinToTrain(new Protein("F", "e"));		
 				
 		AutoencoderController controller = new AutoencoderController(pdata);
 	
@@ -127,21 +116,18 @@ public class AutoencoderTest {
 		//controller.getMostRecentLayer().printHiddenWeightsFromInput(120);
 		//controller.getMostRecentLayer().printHiddenWeightsFromInput(133);
 		//controller.getMostRecentLayer().printHiddenWeightsFromInput(138);
-
-		Integer[] inputUnits = new Integer[3];
-		inputUnits[0] = 120;
-		inputUnits[1] = 133;
-		inputUnits[2] = 138;
-		//controller.printOrthogonalityOfHiddenWeightsToSelectedInputUnits(inputUnits);
-		
+		//Integer[] inputUnits = new Integer[3];
+		//inputUnits[0] = 120;
+		//inputUnits[1] = 133;
+		//inputUnits[2] = 138;
+		//controller.printOrthogonalityOfHiddenWeightsToSelectedInputUnits(inputUnits);		
 		
 		ArrayList<ArrayList<Double>> newData = controller.feedDataThroughNetwork();
 				
 		System.out.println("\nOutput layer");
 		controller.learnOutputLayer();
 		
-		//controller.getMostRecentLayer().printOutputWeightsFromHiddenLayer();
-		
+		//controller.getMostRecentLayer().printOutputWeightsFromHiddenLayer();		
 		//controller.printOrthogonalityOfWeights(2);
 		
 		controller.testAllTrainingData();		
@@ -205,8 +191,12 @@ public class AutoencoderTest {
 		controller.processedData.add(input1);
 		
 		ArrayList<ArrayList<Double>> newData = controller.feedDataThroughNetwork();
-		assertTrue(Math.abs(newData.get(0).get(0) - sigmoid(0.3*0.2+0.7*0.8)) > 0.001);
-		assertTrue(Math.abs(newData.get(0).get(1) - sigmoid(0.5*0.2+0.5*0.8)) > 0.001);
+		System.out.println("Got: " + newData.get(0).get(0) + " Expected: " + sigmoid(1));
+		assertTrue(Math.abs(newData.get(0).get(0) - sigmoid(1)) < 0.001);
+		System.out.println("Got: " + newData.get(0).get(1) + " Expected: " + sigmoid(0.3*0.2+0.7*0.8));
+		assertTrue(Math.abs(newData.get(0).get(1) - sigmoid(0.3*0.2+0.7*0.8)) < 0.001);
+		System.out.println("Got: " + newData.get(0).get(2) + " Expected: " + sigmoid(0.5*0.2+0.5*0.8));
+		assertTrue(Math.abs(newData.get(0).get(2) - sigmoid(0.5*0.2+0.5*0.8)) < 0.001);
 		
 		System.out.println("Passed feed through network test\n\n");	
 	}

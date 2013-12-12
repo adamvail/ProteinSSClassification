@@ -13,7 +13,7 @@ public class NeuralNetworkController {
 	final int OUTPUT_LAYER_SIZE = 3;
 	
 	final double TOLERANCE = 1.0e-16;
-	final int MAX_ITER = 10000;
+	int MAX_ITER = 10000;
 			
 	// Input is size of each layer of units.  Ex: 17 5 3
 	public NeuralNetworkController(ArrayList<Unit> inputLayer, int hiddenLayerSize){	
@@ -63,6 +63,14 @@ public class NeuralNetworkController {
 		return weights;
 	}
 	
+	public ArrayList<ArrayList<Double>> getAllWeights() {
+		ArrayList<ArrayList<Double>> allWeights = new ArrayList<ArrayList<Double>>();
+		for (int i = 1; i < allUnits.size(); i++) {
+			allWeights.add(getWeights(i));		
+		}
+		return allWeights;
+	}
+	
 	public ArrayList<ArrayList<Unit>> autoencoderLearn(ArrayList<ArrayList<Double>> inputValues){
 		// Train the system
 		
@@ -98,13 +106,14 @@ public class NeuralNetworkController {
 				ArrayList<STRUCTURE> outputs){	
 		
 		// Train the system
+		/*
 		for(int i = 0; i < inputValues.size(); i++) {
 			System.out.print("Value: [");
 			for (int j = 0; j < inputValues.get(0).size(); j++) {
 				System.out.print(inputValues.get(i).get(j) + ", ");
 			}
 			System.out.print("]  Output: " + outputs.get(i) + "\n");
-		}
+		}*/
 	
 		ArrayList<Double> weights = getWeights(allUnits.size() - 1);
 		ArrayList<Double> weights_old = new ArrayList<Double>();
@@ -131,11 +140,20 @@ public class NeuralNetworkController {
 
 		
 		// Train the system
+		/*
 		System.out.print("Weights: [");
 		for (int j = 0; j < weights.size(); j++) {
 			System.out.print(weights.get(j) + ", ");
 		}
-		System.out.print("] \n");
+		System.out.print("] \n\n");
+		for(int i = 0; i < outputs.size(); i++){
+			setInputs(inputValues.get(i));
+			feedForward();
+			System.out.print(" Instance " + i + " Output vals: [" );		
+			System.out.print(allUnits.get(allUnits.size()-1).get(0).getValue() + ", " );
+			System.out.print(allUnits.get(allUnits.size()-1).get(1).getValue() + ", " );
+			System.out.print(allUnits.get(allUnits.size()-1).get(2).getValue() + "]\n" );								
+		}*/
 		
 		// only return the hidden unit layer
 		return allUnits;
@@ -196,8 +214,9 @@ public class NeuralNetworkController {
 			allUnits.get(allUnits.size() - 1).get(i).trainWeights(struct[i], LEARNING_RATE);
 		}
 		
+		// handle input units
 		for(int i = 0; i < allUnits.get(0).size(); i++){
-			allUnits.get(0).get(i).trainWeights(null, LEARNING_RATE);
+			allUnits.get(0).get(i).trainInputWeights(null, LEARNING_RATE);
 		}
 	}
 	
@@ -216,7 +235,7 @@ public class NeuralNetworkController {
 		// Doing this for input units only because we need consistent
 		// weights for output units.
 		for(Unit u : allUnits.get(0)){
-			u.trainWeights(null, LEARNING_RATE);
+			u.trainInputWeights(null, LEARNING_RATE);
 		}
 	}
 	
@@ -329,8 +348,7 @@ public class NeuralNetworkController {
 		setInputs(instance);
 		feedForward();
 		
-		// The classification is done winner take all
-		
+		// The classification is done winner take all		
 		return convertOutputsToStructure();
 	}
 	
@@ -339,16 +357,16 @@ public class NeuralNetworkController {
 		feedForward();
 		
 		boolean inputReproduced = true;
-		System.out.println("Autoencoder input->output");
+		//System.out.println("Autoencoder input->output");
 		for (int i = 0; i < allUnits.get(allUnits.size() - 1).size(); i++) {
 			if (Math.abs(allUnits.get(allUnits.size()-3).get(i).getValue() - allUnits.get(allUnits.size()-1).get(i).getValue()) > 0.0001) {
 				inputReproduced = false;
 			}
-			if (allUnits.get(allUnits.size()-1).get(i).getValue() > 0.1) {
-				System.out.println(i + ":   " + instance.get(i) + " -> " + allUnits.get(allUnits.size()-1).get(i).getValue());
-			}
+			//if (allUnits.get(allUnits.size()-1).get(i).getValue() > 0.1) {
+			//	System.out.println(i + ":   " + instance.get(i) + " -> " + allUnits.get(allUnits.size()-1).get(i).getValue());
+			//}
 		}
-		System.out.println();
+		//System.out.println();
 		// The classification is done winner take all
 		return inputReproduced;
 	}
