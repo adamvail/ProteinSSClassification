@@ -51,26 +51,26 @@ public class AutoencoderTest {
 	
 		System.out.println("\nHidden layer 1");
 		controller.learnInitialLayer(5);
+		controller.printWeights();
 		for (ArrayList<Double> d: controller.getProcessedData()) {
 			controller.getMostRecentLayer().classifyAutoencoder(d);
 		}
-		controller.getMostRecentLayer().printHiddenWeightsFromInput(120);
-		controller.getMostRecentLayer().printHiddenWeightsFromInput(133);
-		controller.getMostRecentLayer().printHiddenWeightsFromInput(138);
-		controller.getMostRecentLayer().printOutputWeightsFromHiddenLayerToOutput(138) ;
+		//controller.getMostRecentLayer().printHiddenWeightsFromInput(120);
+		//controller.getMostRecentLayer().printHiddenWeightsFromInput(133);
+		//controller.getMostRecentLayer().printHiddenWeightsFromInput(138);
+		//controller.getMostRecentLayer().printOutputWeightsFromHiddenLayerToOutput(138) ;
 
 		Integer[] inputUnits = new Integer[3];
 		inputUnits[0] = 120;
 		inputUnits[1] = 133;
 		inputUnits[2] = 138;
 		//controller.printOrthogonalityOfHiddenWeightsToSelectedInputUnits(inputUnits);
-
-		
 		
 		ArrayList<ArrayList<Double>> newData = controller.feedDataThroughNetwork();  // Outputs of hidden layer
 
-		System.out.println("\nHidden layer 10");		
+		System.out.println("\nHidden layer 2");		
 		controller.learnHiddenLayer(5);
+		controller.printWeights();
 		
 		//controller.getMostRecentLayer().printHiddenWeightsFromInput(0);
 		//controller.getMostRecentLayer().printHiddenWeightsFromInput(1);
@@ -83,10 +83,11 @@ public class AutoencoderTest {
 		
 		System.out.println("\nOutput layer");
 		controller.learnOutputLayer();
+		controller.printWeights();
 		
-		controller.getMostRecentLayer().printOutputWeightsFromHiddenLayer();
+		//controller.getMostRecentLayer().printOutputWeightsFromHiddenLayer();
 		
-		controller.printOrthogonalityOfWeights(3);
+		//controller.printOrthogonalityOfWeights(3);
 		
 		controller.testAllTrainingData();
 		
@@ -126,10 +127,10 @@ public class AutoencoderTest {
 		//controller.getMostRecentLayer().printHiddenWeightsFromInput(133);
 		//controller.getMostRecentLayer().printHiddenWeightsFromInput(138);
 
-		Integer[] inputUnits = new Integer[3];
-		inputUnits[0] = 120;
-		inputUnits[1] = 133;
-		inputUnits[2] = 138;
+		//Integer[] inputUnits = new Integer[3];
+		//inputUnits[0] = 120;
+		//inputUnits[1] = 133;
+		//inputUnits[2] = 138;
 		//controller.printOrthogonalityOfHiddenWeightsToSelectedInputUnits(inputUnits);
 		
 		

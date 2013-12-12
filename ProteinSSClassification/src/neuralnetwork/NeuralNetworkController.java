@@ -63,6 +63,14 @@ public class NeuralNetworkController {
 		return weights;
 	}
 	
+	public ArrayList<ArrayList<Double>> getAllWeights() {
+		ArrayList<ArrayList<Double>> allWeights = new ArrayList<ArrayList<Double>>();
+		for (int i = 1; i < allUnits.size(); i++) {
+			allWeights.add(getWeights(i));		
+		}
+		return allWeights;
+	}
+	
 	public ArrayList<ArrayList<Unit>> autoencoderLearn(ArrayList<ArrayList<Double>> inputValues){
 		// Train the system
 		
@@ -347,16 +355,16 @@ public class NeuralNetworkController {
 		feedForward();
 		
 		boolean inputReproduced = true;
-		System.out.println("Autoencoder input->output");
+		//System.out.println("Autoencoder input->output");
 		for (int i = 0; i < allUnits.get(allUnits.size() - 1).size(); i++) {
 			if (Math.abs(allUnits.get(allUnits.size()-3).get(i).getValue() - allUnits.get(allUnits.size()-1).get(i).getValue()) > 0.0001) {
 				inputReproduced = false;
 			}
-			if (allUnits.get(allUnits.size()-1).get(i).getValue() > 0.1) {
-				System.out.println(i + ":   " + instance.get(i) + " -> " + allUnits.get(allUnits.size()-1).get(i).getValue());
-			}
+			//if (allUnits.get(allUnits.size()-1).get(i).getValue() > 0.1) {
+			//	System.out.println(i + ":   " + instance.get(i) + " -> " + allUnits.get(allUnits.size()-1).get(i).getValue());
+			//}
 		}
-		System.out.println();
+		//System.out.println();
 		// The classification is done winner take all
 		return inputReproduced;
 	}

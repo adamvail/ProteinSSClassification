@@ -348,4 +348,50 @@ public class AutoencoderController {
 		
 		return convertOutputsToStructure();
 	}
+	
+	private ArrayList<Double> getWeights(int layer) {
+		ArrayList<Double> weights = new ArrayList<Double>();
+	
+		for (int j = 0; j <network.get(layer).size(); j++) {
+			for(int i = 0; i < network.get(layer - 1).size(); i++) {
+				weights.add(network.get(layer).get(j).getWeight(network.get(layer - 1).get(i)));
+			}
+		}
+		
+		return weights;
+	}
+	
+	public ArrayList<ArrayList<Double>> getAllWeights() {
+		ArrayList<ArrayList<Double>> allWeights = new ArrayList<ArrayList<Double>>();
+		for (int i = 1; i < network.size(); i++) {
+			allWeights.add(getWeights(i));		
+		}
+		return allWeights;
+	}
+	
+	public void printWeights() {
+		ArrayList<ArrayList<Double>> recentlyTrainedNetwork = mostRecentLayer.getAllWeights();
+		
+		ArrayList<ArrayList<Double>> finalNetwork = getAllWeights();
+		
+		// Print the weights
+		System.out.println("\nWEIGHTS of SMALL network trained for layer " + (network.size() - 1));
+		for(int i = 0; i < recentlyTrainedNetwork.size(); i++) {
+			System.out.print("  Layer " + i + ": [");
+			for (int j = 0; j < recentlyTrainedNetwork.get(i).size(); j++) {
+				System.out.print(recentlyTrainedNetwork.get(i).get(j) + ", ");
+			}
+			System.out.print("]\n");
+		}
+		// Print the weights
+		System.out.println("WEIGHTS of FULL trained network so far " + (network.size() - 1));
+		for(int i = 0; i < finalNetwork.size(); i++) {
+			System.out.print("  Layer " + i + ": [");
+			for (int j = 0; j < finalNetwork.get(i).size(); j++) {
+				System.out.print(finalNetwork.get(i).get(j) + ", ");
+			}
+			System.out.print("]\n");
+		}
+	}
+		
 }
