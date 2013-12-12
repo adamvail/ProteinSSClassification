@@ -135,7 +135,15 @@ public class NeuralNetworkController {
 		for (int j = 0; j < weights.size(); j++) {
 			System.out.print(weights.get(j) + ", ");
 		}
-		System.out.print("] \n");
+		System.out.print("] \n\n");
+		for(int i = 0; i < outputs.size(); i++){
+			setInputs(inputValues.get(i));
+			feedForward();
+			System.out.print(" Instance " + i + " Output vals: [" );		
+			System.out.print(allUnits.get(allUnits.size()-1).get(0).getValue() + ", " );
+			System.out.print(allUnits.get(allUnits.size()-1).get(1).getValue() + ", " );
+			System.out.print(allUnits.get(allUnits.size()-1).get(2).getValue() + "]\n" );								
+		}	
 		
 		// only return the hidden unit layer
 		return allUnits;

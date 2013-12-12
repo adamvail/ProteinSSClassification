@@ -18,7 +18,7 @@ public class AutoencoderTest {
 	@Test
 	public void test() {
 		
-		testFeedForward();
+		//testFeedForward();
 		
 		System.out.println("Test 2-layer autoencoder controller");
 		ProteinDataSet pdata = new ProteinDataSet();
@@ -50,7 +50,7 @@ public class AutoencoderTest {
 		AutoencoderController controller = new AutoencoderController(pdata);
 	
 		System.out.println("\nHidden layer 1");
-		controller.learnInitialLayer(10);
+		controller.learnInitialLayer(5);
 		for (ArrayList<Double> d: controller.getProcessedData()) {
 			controller.getMostRecentLayer().classifyAutoencoder(d);
 		}
@@ -70,7 +70,7 @@ public class AutoencoderTest {
 		ArrayList<ArrayList<Double>> newData = controller.feedDataThroughNetwork();  // Outputs of hidden layer
 
 		System.out.println("\nHidden layer 10");		
-		controller.learnHiddenLayer(10);
+		controller.learnHiddenLayer(5);
 		
 		//controller.getMostRecentLayer().printHiddenWeightsFromInput(0);
 		//controller.getMostRecentLayer().printHiddenWeightsFromInput(1);
@@ -203,8 +203,12 @@ public class AutoencoderTest {
 		controller.processedData.add(input1);
 		
 		ArrayList<ArrayList<Double>> newData = controller.feedDataThroughNetwork();
-		assertTrue(Math.abs(newData.get(0).get(0) - sigmoid(0.3*0.2+0.7*0.8)) > 0.001);
-		assertTrue(Math.abs(newData.get(0).get(1) - sigmoid(0.5*0.2+0.5*0.8)) > 0.001);
+		System.out.println("Got: " + newData.get(0).get(0) + " Expected: " + sigmoid(1));
+		assertTrue(Math.abs(newData.get(0).get(0) - sigmoid(1)) < 0.001);
+		System.out.println("Got: " + newData.get(0).get(1) + " Expected: " + sigmoid(0.3*0.2+0.7*0.8));
+		assertTrue(Math.abs(newData.get(0).get(1) - sigmoid(0.3*0.2+0.7*0.8)) < 0.001);
+		System.out.println("Got: " + newData.get(0).get(2) + " Expected: " + sigmoid(0.5*0.2+0.5*0.8));
+		assertTrue(Math.abs(newData.get(0).get(2) - sigmoid(0.5*0.2+0.5*0.8)) < 0.001);
 		
 		System.out.println("Passed feed through network test\n\n");	
 	}

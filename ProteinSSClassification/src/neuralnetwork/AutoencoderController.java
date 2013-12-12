@@ -158,13 +158,23 @@ public class AutoencoderController {
 	}
 	
 	private void feedForward(ArrayList<Double> datum) {
+		System.out.print("   Feed forward layer 0 has value = 1 at: [");
 		for(int i = 0; i < datum.size(); i++) {
 			network.get(0).get(i).setValue(datum.get(i));
+			if (Math.abs(datum.get(i) - .99) < 0.01) {
+				System.out.print(i + ", ");
+			} else if (datum.get(i) > 0.01) {
+				System.out.print(i + "(" + datum.get(i) + "), ");
+			}
 		}
+		System.out.print("]\n");
 		for(int i = 1; i < network.size(); i++){
+			System.out.print("   Feed forward layer " + i + ": [");
 			for(Unit u : network.get(i)){
 				u.calculateOutputValue();
+				System.out.print(u.getValue() + ", ");
 			}
+			System.out.print("]\n");
 		}
 	}
 	
