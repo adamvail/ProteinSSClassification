@@ -24,7 +24,7 @@ public class BaselineNeuralNetwork {
 	final int OUTPUT_LAYER_SIZE = 3;
 	
 	final double TOLERANCE = 1e-7;
-	final int MAX_ITER = 10;
+	final int MAX_ITER = 5;
 	
 	int windowSize = 13;
 	final int NUM_AMINO_ACIDS = 20;
@@ -32,9 +32,12 @@ public class BaselineNeuralNetwork {
 	
 	BufferedWriter outputFile = null;
 	
-	public BaselineNeuralNetwork(ProteinDataSet data, BufferedWriter outputFile) {
+	public BaselineNeuralNetwork(ProteinDataSet data, BufferedWriter outputFile, int hiddenLayerSize, int windowSize) {
 		this.data = data;
-		runNN();
+		this.outputFile = outputFile;
+		this.windowSize = windowSize;
+		this.NUM_HIDDEN_UNITS = hiddenLayerSize;
+		runNN();		
 	}
 	
 	public void writeOutput(String output) {
@@ -76,6 +79,9 @@ public class BaselineNeuralNetwork {
 		processedData = new ArrayList<ArrayList<Double>>();
 		structures = new ArrayList<STRUCTURE>();
 		for (Protein protein : data.getTrain()) {
+			if(protein.getSequence().length() != protein.getSecondaryStructure().length()) {
+				System.out.println("NOT THE SAME SIZE: " + protein.getName());
+			}
 			processedData.addAll(convertProteinToDoubles(protein));
 			structures.addAll(convertProteinStructure(protein));
 		}
@@ -123,7 +129,10 @@ public class BaselineNeuralNetwork {
 		String sequence = protein.getSequence();
 		// add spacing so that we can treat the first and last
 		// amino acids as the center of a residue
-		sequence = "      " + sequence + "      ";
+		for(int k = 0; k < halfWindow; k++) {
+			sequence = " " + sequence + " ";
+		}
+		//sequence = "      " + sequence + "      ";
 		ArrayList<ArrayList<Double>> inputs = new ArrayList<ArrayList<Double>>();
 		for (int i = halfWindow; i < sequence.length() - halfWindow; i++) {
 			int startIndex = i - halfWindow;
@@ -158,6 +167,7 @@ public class BaselineNeuralNetwork {
 	
 	private ArrayList<STRUCTURE> convertProteinStructure(Protein protein) {
 		String structure = protein.getSecondaryStructure();
+		
 		//System.out.println(structure);
 		ArrayList<STRUCTURE> structures = new ArrayList<STRUCTURE>();
 		for (char s : structure.toCharArray()) {
@@ -170,7 +180,7 @@ public class BaselineNeuralNetwork {
 				break;
 			case '-':
 				structures.add(STRUCTURE.LOOP);
-				break;	
+				break;
 			default:
 				System.out.println("Error in structure data.  Contained character " + s);
 				System.exit(1);
@@ -204,6 +214,11 @@ public class BaselineNeuralNetwork {
 	public ArrayList<ArrayList<Unit>> neuralNetworkLearn(ArrayList<ArrayList<Double>> inputValues, 
 				ArrayList<STRUCTURE> outputs){	
 		
+		if(inputValues.size() != outputs.size()) {
+			System.out.println("Inputs do not match outputs for: " + NUM_HIDDEN_UNITS + " hidden units");
+		}
+		
+		
 		// Train the system
 	
 		ArrayList<Double> weights = getWeights(allUnits.size() - 1);
@@ -213,12 +228,12 @@ public class BaselineNeuralNetwork {
 			weights_old.add(0.0);
 		}
 		
-		System.out.println(outputs.size());
+		//System.out.println(outputs.size());
 		long curTime = System.currentTimeMillis();
 		
 		int iter = 0;
 		while (squaredSum(weights, weights_old) > TOLERANCE && iter < MAX_ITER) {
-			for(int i = 0; i < outputs.size(); i++){
+			for(int i = 0; i < inputValues.size(); i++){
 			//for(int i = 0; i < 1000; i++){
 				setInputs(inputValues.get(i));
 				feedForward();
@@ -228,8 +243,8 @@ public class BaselineNeuralNetwork {
 			weights = getWeights(allUnits.size() - 1);
 			iter++;
 		}
-		System.out.println(iter);
-		System.out.println((double)(System.currentTimeMillis() - curTime) / 1000);
+		//System.out.println(iter);
+		//System.out.println((double)(System.currentTimeMillis() - curTime) / 1000);
 		return allUnits;
 	}
 	
@@ -363,15 +378,17 @@ public class BaselineNeuralNetwork {
 		int winner = -1;
 		
 		for(int i = 0; i < allUnits.get(allUnits.size() - 1).size(); i++){
-			writeOutput(allUnits.get(allUnits.size() - 1).get(i).getValue() + " ");
-
+			//writeOutput(allUnits.get(allUnits.size() - 1).get(i).getValue() + " ");
+			System.out.print(allUnits.get(allUnits.size() - 1).get(i).getValue() + " ");
+			
 			Unit output = allUnits.get(allUnits.size() - 1).get(i);
 			if(output.getValue() > highestOutput){
 				highestOutput = output.getValue();
 				winner = i;
 			}
 		}
-		writeOutput("\n");
+		//writeOutput("\n");
+		System.out.println();
 		
 		switch(winner){
 		case 0:
@@ -389,11 +406,17 @@ public class BaselineNeuralNetwork {
 	
 	public void classifyNeuralNetwork(){
 		double correct = 0.0;
+		double failed = 0.0;
 		
 		ArrayList<ArrayList<Double>> processedTestData = new ArrayList<ArrayList<Double>>();
 		ArrayList<STRUCTURE> testStructures = new ArrayList<STRUCTURE>();
 		
 		for (Protein protein : data.getTest()) {
+			if(protein.getSequence().length() != protein.getSecondaryStructure().length()) {
+				// Don't use proteins without all secondary structure data
+				continue;
+			}
+			
 			processedTestData.addAll(convertProteinToDoubles(protein));
 			testStructures.addAll(convertProteinStructure(protein));
 		}
@@ -402,15 +425,21 @@ public class BaselineNeuralNetwork {
 			setInputs(processedTestData.get(i));
 			feedForward();
 			STRUCTURE output = convertOutputsToStructure();
-			writeOutput("Prediction: " + output.toString() + "  Actual: " + testStructures.get(i).toString() + "\n\n");
-			if(output == testStructures.get(i)) {
-				correct++;
+			try {
+				//writeOutput("Prediction: " + output.toString() + "  Actual: " + testStructures.get(i).toString() + "\n\n");
+				System.out.println("Prediction: " + output.toString() + "  Actual: " + testStructures.get(i).toString() + "\n");
+				if(output == testStructures.get(i)) {
+					correct++;
+				}
+			}
+			catch (Exception e) {
+				failed++;
 			}
 		}
 		
 		// The classification is done winner take all
-		System.out.println("Accuracy: " + (correct / processedTestData.size()) * 100);
-		writeOutput("Accuracy: " + (correct / processedTestData.size()) * 100 + "\n");
+		System.out.println("Accuracy: " + (correct / processedTestData.size() - failed) * 100);
+		//writeOutput("Accuracy: " + (correct / processedTestData.size()) * 100 + "\n");
 	}
 	
 	public enum STRUCTURE {

@@ -125,7 +125,11 @@ public class AutoencoderController {
 		String sequence = protein.getSequence();
 		// add spacing so that we can treat the first and last
 		// amino acids as the center of a residue
-		sequence = "      " + sequence + "      ";
+		
+		for(int k = 0; k < halfWindow; k++) {
+			sequence = " " + sequence + " ";
+		}
+		//sequence = "      " + sequence + "      ";
 		ArrayList<ArrayList<Double>> inputs = new ArrayList<ArrayList<Double>>();
 		for (int i = halfWindow; i < sequence.length() - halfWindow; i++) {
 			int startIndex = i - halfWindow;

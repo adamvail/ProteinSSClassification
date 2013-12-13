@@ -8,25 +8,21 @@
 uciTestFilename="/Users/vail/Documents/school/cs760/ProteinSSClassification/data/uci/uci_protein_data.test"
 
 trainFilename="/home/vail/Documents/school/cs760/ProteinSSClassification/data/data.train"
-outputDirectory="/home/vail/Documents/school/cs760/ProteinSSClassification/results/baseline"
+outputDirectory="/home/vail/Documents/school/cs760/ProteinSSClassification/results/baseline/hiddenLayerSize"
 
 numHiddenLayers=1
-hiddenLayerSize=50 # jump this by 5 all the way up to 50
-iterations=5 # increase the number of iterations as we go
+hiddenLayerSize=50 
+iterations=5 
 windowSize=13
 baseline="y"
 
 
 # Baseline experiments
-
+count=1
 for i in {15..300..15}
 do
-    echo "Running Baseline: hidden layer size -> $i" >> "${outputDirectory}/log"
-    java -jar deepnetwork.jar $trainFilename "none" $windowSize $numHiddenLayers $i $iterations $outputDirectory $baseline
-done
-
-for i in 7 11 13 17
-do
-    echo "Running Baseline: window size -> $i" >> "${outputDirectory}/log"
-    java -jar deepnetwork.jar $trainFilename "none" $i $numHiddenLayers $hiddenLayerSize $iterations $outputDirectory $baseline
+    echo "Running Baseline: hidden layer size -> $i" >> "${outputDirectory}/baseline.log"
+    outputFile="${outputDirectory}/baseline_${numHiddenLayers}nhl_${i}hls_${windowSize}ws_"
+    count=$(($count + 1))
+    java -jar deepNetwork.jar $trainFilename "none" $windowSize $numHiddenLayers $i $iterations $outputDirectory $baseline > $outputFile
 done

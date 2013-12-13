@@ -70,12 +70,13 @@ public class ProteinSSClassification {
 		int iter = 1;
 		// Loop through all our data with the given parameters
 		for(ProteinDataSet d : data) {
+			/*
 			try {
 				outputFile = new BufferedWriter(new FileWriter(new File(outputDir, outputFilenameBase + "_" + iter )));
 			} catch (IOException e) {
 				e.printStackTrace();
 			}
-			
+			*/
 			
 			AutoencoderController controller = new AutoencoderController(d, windowSize, outputFile);
 			controller.learnInitialLayer(hiddenLayerSize, iterations);
@@ -86,11 +87,13 @@ public class ProteinSSClassification {
 
 			controller.runTestSet();
 			iter++;
+			/*
 			try {
 				outputFile.close();
 			} catch (IOException e) {
 				e.printStackTrace();
 			}
+			*/
 		}
 	}
 	
@@ -123,20 +126,22 @@ public class ProteinSSClassification {
 		
 		int iter = 1;
 		for(ProteinDataSet proteins : data) {
-			try {
-				outputFile = new BufferedWriter(new FileWriter(new File(outputDir, outputFilenameBase + "_" + iter )));
+			/*try {
+			//	outputFile = new BufferedWriter(new FileWriter(new File(outputDir, outputFilenameBase + "_" + iter )));
 			} catch (IOException e) {
 				e.printStackTrace();
 			}
+			*/
 					
 			//System.out.println("\n" + proteins.getTrain().size());
-			BaselineNeuralNetwork nn = new BaselineNeuralNetwork(proteins, outputFile);
+			BaselineNeuralNetwork nn = new BaselineNeuralNetwork(proteins, outputFile, hiddenLayerSize, windowSize);
 			iter++;
-			try {
+			/*try {
 				outputFile.close();
 			} catch (IOException e) {
 				e.printStackTrace();
 			}
+			*/
 		}
 	}	
 	
