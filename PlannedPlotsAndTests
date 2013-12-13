@@ -2,24 +2,34 @@
 
 * Baseline study
   - Different size of hidden layer (1 hidden layer is all)
-  - x-fold cross validation
+
 
 * Learning curve
   - Vary number of Hidden layers (**)
   - Vary Hidden layer size (use baseline study #s)
   - vs baseline
 
+
 * ROC curve
   - for best method (from learning curves) vs baseline.  Use confidence data that we're outputting
   - TODO: confidence data for baseline
+  - STEPH: Research confidence levels - how to calculate!
+  - ADAM: Preprocessers for confidence data
+  - decide by saturday nigth settings for ROC run
+  - run on opt
+  - STEPH
+
 
 * Accuracy vs # Iterations:  (For 1, 5, 10 iterations)  -- Show that it improves with more iterations, even if it didn't converge.
-
+  - 2 layer autoencoder.  windows size ?, 15 hidden nodes
+  - ADAM
 
 
 * Interesting questions:
   - what if we vary size of layers (use a decay constant in input or something)?
+     *  STEPH
   - is it helpful to connect outputs to intermediate layers or inputs?
+     *  ADAM
 
 
 * If we had time (future work):
@@ -27,3 +37,7 @@
   - window size?  (this is chosen because it is "standard")
   - is it helpful to add biases?
   - ensemble of deep networks (different window sizes)
+  - x-fold cross validation
+
+
+ADAM & STEPH - change to 5-fold
