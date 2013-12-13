@@ -22,7 +22,7 @@ count=1
 for i in {15..300..15}
 do
     echo "Running Baseline: hidden layer size -> $i" >> "${outputDirectory}/baseline.log"
-    outputFile="${outputDirectory}/baseline_${numHiddenLayers}nhl_${i}hls_${windowSize}ws_"
+    outputFile="${outputDirectory}/baseline_${numHiddenLayers}nhl_${i}hls_${windowSize}ws"
     count=$(($count + 1))
     java -jar deepNetwork.jar $trainFilename "none" $windowSize $numHiddenLayers $i $iterations $outputDirectory $baseline > $outputFile
 done

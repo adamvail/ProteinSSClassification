@@ -3,40 +3,29 @@
 # Usage: <protein train> <protein test> 
 #                 <window size> <number of hidden layers> <hidden layer size> <iterations> <output directory> <baseline>
 
-rostTrainFilename="/Users/vail/Documents/school/cs760/ProteinSSClassification/data/rost/protein_data"
-uciTrainFilename="/Users/vail/Documents/school/cs760/ProteinSSClassification/data/uci/uci_protein_data.train"
-uciTestFilename="/Users/vail/Documents/school/cs760/ProteinSSClassification/data/uci/uci_protein_data.test"
-outputDirectory="/Users/vail/Desktop/DeepNetworkData"
+outputDirectory="/mnt/ws/home/sdewet/760-project/ProteinSSClassification/results/deep"
+trainFilename="/mnt/ws/home/sdewet/760-project/ProteinSSClassification/data/data.train"
 
 numHiddenLayers=2
-hiddenLayerSize=26 # default value provided by baseline tests
+hiddenLayerSize=15 # default value provided by baseline tests
 iterations=5 # increase the number of iterations as we go
 windowSize=13
 baseline="n"
 
 # Test the number of hidden layers
-for i in 1 2 3 4 5 
+for i in 1 2 3
 do
-    echo "Running Deep Network: hidden layer number -> $i" >> "${outputDirectory}/log"
-    java -jar deepnetwork.jar $rostTrainFilename "none" $windowSize $i $hiddenLayerSize $iterations $outputDirectory $baseline
+    outputFile="${outputDirectory}/deep_${i}nhl_${hiddenLayerSize}hls_${windowSize}ws"
+    echo "Running Deep Network: hidden layer size 15, layer number -> $i" >> "${outputDirectory}/deep.log"
+    java -jar deepnetwork.jar $trainFilename "none" $windowSize $i $hiddenLayerSize $iterations $outputDirectory $baseline > $outputFile
+    echo "Done" >> "${outputDirectory}/deep.log"
 done
 
-# Test the number of iterations
-#for i in 1 2 5 10 15
-#do
-#    echo "Running Deep Network: iteration -> $i" >> "${outputDirectory}/log"
-#    java -jar deepnetwork.jar $rostTrainFilename "none" $windowSize $numHiddenLayers $i $iterations $outputDirectory $baseline
-#done
-#
-## Test the size of the hidden layer
-#for i in {5..50..5}
-#do
-#    echo "Running Deep Network: hidden layer size -> $i" >> "${outputDirectory}/log"
-#    java -jar deepnetwork.jar $rostTrainFilename "none" $windowSize $numHiddenLayers $i $iterations $outputDirectory $baseline
-#done
-#
-#for i in 7 11 13 17
-#do
-#    echo "Running Deep Network: window size -> $i" >> "${outputDirectory}/log"
-#    java -jar deepnetwork.jar $rostTrainFilename "none" $i $numHiddenLayers $hiddenLayerSize $iterations $outputDirectory $baseline
-#done
+hiddenLayerSize=26
+for i in 1 2 3
+do
+    outputFile="${outputDirectory}/deep_${i}nhl_${hiddenLayerSize}hls_${windowSize}ws"
+    echo "Running Deep Network: hidden layer size 26, layer number -> $i" >> "${outputDirectory}/deep.log"
+    java -jar deepnetwork.jar $trainFilename "none" $windowSize $i $hiddenLayerSize $iterations $outputDirectory $baseline > $outputFile
+    echo "Done" >> "${outputDirectory}/deep.log"
+done
