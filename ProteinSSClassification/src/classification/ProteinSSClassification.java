@@ -15,7 +15,7 @@ import dataprocessing.ProteinDataSet;
 
 public class ProteinSSClassification {
 	
-	static int crossValidationDegree = 5;
+	static int crossValidationDegree = 7;
 	BufferedWriter outputFile = null;
 	
 	public ProteinSSClassification(String trainFilename, String testFilename,  int windowSize, int numHiddenLayers,
