@@ -183,9 +183,21 @@ public class NeuralNetworkController {
 		return allUnits;
 	}
 	
+	public ArrayList<ArrayList<Unit>> learnConnectedOutput(STRUCTURE output) {
+		
+		// feed forward to the output nodes
+		feedForward();
+		
+		// back propagate to change weights
+		backPropagateNN(output);
+
+		
+		return allUnits;
+	}
+	
 	private void connectGraph(){
 		
-		// connect all the inputs. Yields initial wedge weights
+		// connect all the inputs. Yields initial edge weights
 		for(int i = 0; i < allUnits.size() - 1; i++){
 			for(Unit u : allUnits.get(i+1)){
 				u.addAllInput(allUnits.get(i));

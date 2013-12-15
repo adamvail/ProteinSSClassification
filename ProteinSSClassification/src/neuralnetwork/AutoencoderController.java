@@ -238,6 +238,37 @@ public class AutoencoderController {
 		
 	}
 	
+	public void learnConnectedOutputLayer(int iterations) {
+		
+		ArrayList<ArrayList<Unit>> outputLayer = null;
+		
+		// get all units to make a flat input layer for the output layer
+		ArrayList<Unit> flatInputLayer = new ArrayList<Unit>();
+		for(int i = 0 ; i < network.size(); i++) {
+			for(int j = 0; j < network.get(i).size(); j++) {
+				flatInputLayer.add(network.get(i).get(j));
+			}
+		}
+		
+		NeuralNetworkController layerController = new 
+				NeuralNetworkController(flatInputLayer, outputFile);
+		layerController.setMaxIterations(iterations);
+		
+		// Feed everything forward and then hand off the output
+		for(int i = 0; i < iterations; i++) {
+			for (int j = 0; j < processedData.size(); j++) {
+				// Feed this piece of data through the network
+				// Now all values are set
+				feedForward(processedData.get(j));
+				// Do back propagation to learn weights to all nodes
+				outputLayer = layerController.learnConnectedOutput(structures.get(j));
+			}
+		}
+		if(outputLayer != null) {
+			network.add(outputLayer.get(1));
+		}
+	}
+	
 	private STRUCTURE convertOutputsToStructure(){
 		double highestOutput = Double.NEGATIVE_INFINITY;
 		int winner = -1;
