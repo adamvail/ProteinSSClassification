@@ -19,19 +19,21 @@ public class ProteinSSClassification {
 	BufferedWriter outputFile = null;
 	
 	public ProteinSSClassification(String trainFilename, String testFilename,  int windowSize, int numHiddenLayers,
-			int hiddenLayerSize, int iterations, String outputDir, boolean baseline, boolean traditionalOutput){
+			int hiddenLayerSize, int iterations, String outputDir, boolean baseline, boolean traditionalOutput, double decayBy){
+
 
 		if(baseline) {
 			runBaseline(trainFilename, testFilename, hiddenLayerSize, windowSize, outputDir);
 		}
 		else {
-			runDeepNetwork(trainFilename, testFilename, windowSize, numHiddenLayers, hiddenLayerSize, iterations, outputDir, traditionalOutput);
+			runDeepNetwork(trainFilename, testFilename, windowSize, numHiddenLayers, hiddenLayerSize, 
+					iterations, outputDir, traditionalOutput, decayBy);
 		}
 		 
 	}
 	
 	public void runDeepNetwork(String trainFilename, String testFilename,  int windowSize, int numHiddenLayers,
-			int hiddenLayerSize, int iterations, String outputDir, boolean traditionalOutput) {
+			int hiddenLayerSize, int iterations, String outputDir, boolean traditionalOutput, double decayBy) {
 		ArrayList<ProteinDataSet> data;
 		
 		Calendar c = Calendar.getInstance();
@@ -80,8 +82,9 @@ public class ProteinSSClassification {
 			
 			AutoencoderController controller = new AutoencoderController(d, windowSize, outputFile);
 			controller.learnInitialLayer(hiddenLayerSize, iterations);
+			int decayAmt = (int)(hiddenLayerSize * decayBy);
 			for(int i = 0; i < numHiddenLayers; i++) {
-				controller.learnHiddenLayer(hiddenLayerSize, iterations);
+				controller.learnHiddenLayer(hiddenLayerSize - i * decayAmt, iterations);
 			}
 			if(traditionalOutput) {
 				controller.learnOutputLayer(iterations);
@@ -157,7 +160,8 @@ public class ProteinSSClassification {
 		// Here is the start of our protein secondary
 		// structure classification project
 		
-		if(args.length != 9){
+
+		if(!(args.length == 8 || args.length == 9)){
 			System.out.println("Usage: ./ProteinSSClassification <protein train> <protein test> " + 
 						"<window size> <number of hidden layers> <hidden layer size> <iterations> <output directory> <baseline> <traditional output>");
 			System.exit(1);
@@ -174,9 +178,14 @@ public class ProteinSSClassification {
 		if(args[7].equalsIgnoreCase("yes") || args[7].equalsIgnoreCase("y")) {
 			baseline = true;
 		}
+
 		boolean traditionalOutput = true;
 		if(args[8].equalsIgnoreCase("no") || args[8].equalsIgnoreCase("n")) {
 			traditionalOutput = false;
+		}
+		double decayBy = 1.0;
+		if (args.length == 9) {
+			decayBy = Double.parseDouble(args[8]);
 		}
 		
 		if(testFilename.equalsIgnoreCase("none")) {
@@ -184,9 +193,7 @@ public class ProteinSSClassification {
 		}
 		
 		ProteinSSClassification classification = new ProteinSSClassification(trainFilename, testFilename, windowSize, 
-					numHiddenLayers, hiddenLayerSize, iterations, outputDir, baseline, traditionalOutput);
-		
-		
+					numHiddenLayers, hiddenLayerSize, iterations, outputDir, baseline,traditionalOutput, decayBy);		
 		
 	}
 	
