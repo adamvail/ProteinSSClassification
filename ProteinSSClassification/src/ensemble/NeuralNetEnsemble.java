@@ -30,6 +30,7 @@ public class NeuralNetEnsemble {
 		bagProteins();
 		createNeuralNetworks();
 		
+		classifyTestInstances();
 	}
 	
 	public void classifyTestInstances() {
@@ -84,16 +85,20 @@ public class NeuralNetEnsemble {
 			return STRUCTURE.LOOP;
 		}
 		else if( alpha == loop && alpha == beta) {
+			System.out.println("Equal: all same");
 			// All three are the same, loop is most common so return that
 			return STRUCTURE.LOOP;
 		}
 		else if (alpha == beta) {
+			System.out.println("Equal: alpha and beta");
 			return STRUCTURE.ALPHA;
 		}
 		else if(alpha == loop) {
+			System.out.println("Equal: alpha and loop");
 			return STRUCTURE.LOOP;
 		}
 		else if(beta == loop) {
+			System.out.println("Equal: beta and loop");
 			return STRUCTURE.LOOP;
 		}
 		else {

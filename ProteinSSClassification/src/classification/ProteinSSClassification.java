@@ -1,8 +1,6 @@
 package classification;
 
 import java.io.BufferedWriter;
-import java.io.File;
-import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -12,6 +10,7 @@ import baseline.BaselineNeuralNetwork;
 import dataprocessing.CrossValidation;
 import dataprocessing.Protein;
 import dataprocessing.ProteinDataSet;
+import ensemble.NeuralNetEnsemble;
 
 public class ProteinSSClassification {
 	
@@ -19,10 +18,14 @@ public class ProteinSSClassification {
 	BufferedWriter outputFile = null;
 	
 	public ProteinSSClassification(String trainFilename, String testFilename,  int windowSize, int numHiddenLayers,
-			int hiddenLayerSize, int iterations, String outputDir, boolean baseline, boolean traditionalOutput, double decayBy){
+			int hiddenLayerSize, int iterations, String outputDir, boolean baseline, boolean traditionalOutput, double decayBy,
+			boolean ensemble){
 
-
-		if(baseline) {
+		if(ensemble){
+			System.out.println("Creating ensemble");
+			NeuralNetEnsemble NNEnsemble = new NeuralNetEnsemble(trainFilename, testFilename, hiddenLayerSize, windowSize, 5);
+		}
+		else if(baseline) {
 			runBaseline(trainFilename, testFilename, hiddenLayerSize, windowSize, outputDir);
 		}
 		else {
@@ -198,7 +201,7 @@ public class ProteinSSClassification {
 		}
 		
 		ProteinSSClassification classification = new ProteinSSClassification(trainFilename, testFilename, windowSize, 
-					numHiddenLayers, hiddenLayerSize, iterations, outputDir, baseline,traditionalOutput, decayBy);		
+					numHiddenLayers, hiddenLayerSize, iterations, outputDir, baseline,traditionalOutput, decayBy, ensemble);		
 		
 	}
 	
