@@ -161,7 +161,7 @@ public class ProteinSSClassification {
 		// structure classification project
 		
 
-		if(!(args.length == 8 || args.length == 9)){
+		if(!(args.length == 11)){
 			System.out.println("Usage: ./ProteinSSClassification <protein train> <protein test> " + 
 						"<window size> <number of hidden layers> <hidden layer size> <iterations> <output directory> <baseline> <traditional output>");
 			System.exit(1);
@@ -185,7 +185,12 @@ public class ProteinSSClassification {
 		}
 		double decayBy = 1.0;
 		if (args.length == 9) {
-			decayBy = Double.parseDouble(args[8]);
+			decayBy = Double.parseDouble(args[9]);
+		}
+		
+		boolean ensemble = false;
+		if(args[10].equalsIgnoreCase("yes") || args[10].equalsIgnoreCase("y")) {
+			ensemble = true;
 		}
 		
 		if(testFilename.equalsIgnoreCase("none")) {
