@@ -1,8 +1,6 @@
 package classification;
 
 import java.io.BufferedWriter;
-import java.io.File;
-import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -12,27 +10,33 @@ import baseline.BaselineNeuralNetwork;
 import dataprocessing.CrossValidation;
 import dataprocessing.Protein;
 import dataprocessing.ProteinDataSet;
+import ensemble.NeuralNetEnsemble;
 
 public class ProteinSSClassification {
 	
-	static int crossValidationDegree = 7;
+	static int crossValidationDegree = 5;
 	BufferedWriter outputFile = null;
 	
 	public ProteinSSClassification(String trainFilename, String testFilename,  int windowSize, int numHiddenLayers,
-			int hiddenLayerSize, int iterations, String outputDir, boolean baseline, double decayBy){
+			int hiddenLayerSize, int iterations, String outputDir, boolean baseline, boolean traditionalOutput, double decayBy,
+			boolean ensemble){
 
-		if(baseline) {
+		if(ensemble){
+			System.out.println("Creating ensemble");
+			NeuralNetEnsemble NNEnsemble = new NeuralNetEnsemble(trainFilename, testFilename, hiddenLayerSize, windowSize, 5);
+		}
+		else if(baseline) {
 			runBaseline(trainFilename, testFilename, hiddenLayerSize, windowSize, outputDir);
 		}
 		else {
 			runDeepNetwork(trainFilename, testFilename, windowSize, numHiddenLayers, hiddenLayerSize, 
-					iterations, outputDir, decayBy);
+					iterations, outputDir, traditionalOutput, decayBy);
 		}
 		 
 	}
 	
 	public void runDeepNetwork(String trainFilename, String testFilename,  int windowSize, int numHiddenLayers,
-			int hiddenLayerSize, int iterations, String outputDir, double decayBy) {
+			int hiddenLayerSize, int iterations, String outputDir, boolean traditionalOutput, double decayBy) {
 		ArrayList<ProteinDataSet> data;
 		
 		Calendar c = Calendar.getInstance();
@@ -85,7 +89,12 @@ public class ProteinSSClassification {
 			for(int i = 0; i < numHiddenLayers; i++) {
 				controller.learnHiddenLayer(hiddenLayerSize - i * decayAmt, iterations);
 			}
-			controller.learnOutputLayer(iterations);			
+			if(traditionalOutput) {
+				controller.learnOutputLayer(iterations);
+			}
+			else {
+				controller.learnConnectedOutputLayer(iterations);
+			}
 
 			controller.runTestSet();
 			iter++;
@@ -154,9 +163,10 @@ public class ProteinSSClassification {
 		// Here is the start of our protein secondary
 		// structure classification project
 		
-		if(!(args.length == 8 || args.length == 9)){
+
+		if(!(args.length == 11)){
 			System.out.println("Usage: ./ProteinSSClassification <protein train> <protein test> " + 
-						"<window size> <number of hidden layers> <hidden layer size> <iterations> <output directory> <baseline>");
+						"<window size> <number of hidden layers> <hidden layer size> <iterations> <output directory> <baseline> <traditional output>");
 			System.exit(1);
 		}
 		
@@ -171,9 +181,19 @@ public class ProteinSSClassification {
 		if(args[7].equalsIgnoreCase("yes") || args[7].equalsIgnoreCase("y")) {
 			baseline = true;
 		}
+
+		boolean traditionalOutput = true;
+		if(args[8].equalsIgnoreCase("no") || args[8].equalsIgnoreCase("n")) {
+			traditionalOutput = false;
+		}
 		double decayBy = 1.0;
 		if (args.length == 9) {
-			decayBy = Double.parseDouble(args[8]);
+			decayBy = Double.parseDouble(args[9]);
+		}
+		
+		boolean ensemble = false;
+		if(args[10].equalsIgnoreCase("yes") || args[10].equalsIgnoreCase("y")) {
+			ensemble = true;
 		}
 		
 		if(testFilename.equalsIgnoreCase("none")) {
@@ -181,9 +201,7 @@ public class ProteinSSClassification {
 		}
 		
 		ProteinSSClassification classification = new ProteinSSClassification(trainFilename, testFilename, windowSize, 
-					numHiddenLayers, hiddenLayerSize, iterations, outputDir, baseline, decayBy);
-		
-		
+					numHiddenLayers, hiddenLayerSize, iterations, outputDir, baseline,traditionalOutput, decayBy, ensemble);		
 		
 	}
 	

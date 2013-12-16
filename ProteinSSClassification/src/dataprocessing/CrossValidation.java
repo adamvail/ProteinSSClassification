@@ -80,7 +80,7 @@ public class CrossValidation {
 		return fullDataSet;
 	}
 	
-	private static ArrayList<Protein> readData(String filename){
+	public static ArrayList<Protein> readData(String filename){
 		ArrayList<Protein> proteins = new ArrayList<Protein>();
 		BufferedReader reader = null;
 		

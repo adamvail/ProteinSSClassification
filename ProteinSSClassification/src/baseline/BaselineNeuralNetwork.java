@@ -24,11 +24,11 @@ public class BaselineNeuralNetwork {
 	final int OUTPUT_LAYER_SIZE = 3;
 	
 	final double TOLERANCE = 1e-7;
-	final int MAX_ITER = 5;
+	final int MAX_ITER = 1;
 	
 	int windowSize = 13;
 	final int NUM_AMINO_ACIDS = 20;
-	int NUM_HIDDEN_UNITS = 50;
+	int NUM_HIDDEN_UNITS = 30;
 	
 	BufferedWriter outputFile = null;
 	
@@ -72,7 +72,7 @@ public class BaselineNeuralNetwork {
 		neuralNetworkLearn(processedData, structures);
 		
 		// Print out the accuracy of this neural network
-		classifyNeuralNetwork();
+		//classifyNeuralNetwork();
 	}
 	
 	private void initializeInputs(){
@@ -122,7 +122,7 @@ public class BaselineNeuralNetwork {
 	 * @param protein - protein to chunk using the sliding window
 	 * @return
 	 */
-	private ArrayList<ArrayList<Double>> convertProteinToDoubles(Protein protein) {
+	public ArrayList<ArrayList<Double>> convertProteinToDoubles(Protein protein) {
 		
 		int halfWindow = windowSize / 2;
 		
@@ -165,7 +165,7 @@ public class BaselineNeuralNetwork {
 		return inputs;
 	}
 	
-	private ArrayList<STRUCTURE> convertProteinStructure(Protein protein) {
+	public ArrayList<STRUCTURE> convertProteinStructure(Protein protein) {
 		String structure = protein.getSecondaryStructure();
 		
 		//System.out.println(structure);
@@ -440,6 +440,13 @@ public class BaselineNeuralNetwork {
 		// The classification is done winner take all
 		System.out.println("Accuracy: " + (correct / processedTestData.size() - failed) * 100);
 		//writeOutput("Accuracy: " + (correct / processedTestData.size()) * 100 + "\n");
+	}
+	
+	public STRUCTURE classifySingleInstance(ArrayList<Double> instance) {
+		setInputs(instance);
+		feedForward();
+		STRUCTURE output = convertOutputsToStructure();
+		return output;
 	}
 	
 	public enum STRUCTURE {
