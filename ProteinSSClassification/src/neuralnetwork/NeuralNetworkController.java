@@ -103,16 +103,32 @@ public class NeuralNetworkController {
 		
 		int iter = 0;
 		int squaredNumWeights = weights.size() * weights.size();
+		int instancePosition = 0;
 		while (squaredSum(weights, weights_old) > TOLERANCE * squaredNumWeights && iter < MAX_ITER) {
-			for(ArrayList<Double> inst : inputValues){
+			/*for(ArrayList<Double> inst : inputValues){
 				setInputs(inst);
 				//printInitialWeights();
 				feedForward();
 				backPropagateAE(inst);
 				//printGraph();
-			}	
+			}
+			*/
+			if(instancePosition == inputValues.size()){
+				instancePosition = 0;
+			}
+			setInputs(inputValues.get(instancePosition));
+			feedForward();
+			backPropagateAE(inputValues.get(instancePosition));
+			instancePosition++;
+			
 			weights_old = weights;
 			weights = getWeights(allUnits.size() - 2);
+			
+			//for(int i = 0; i < weights.size(); i++) {
+			//	System.out.print(weights.get(i) + " ");
+			//}
+			//System.out.println();
+			
 			iter++;
 		}
 		System.out.println("iters to train: " + iter + 

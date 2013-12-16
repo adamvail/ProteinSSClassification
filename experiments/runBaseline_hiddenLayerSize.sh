@@ -15,7 +15,7 @@ hiddenLayerSize=50
 iterations=5 
 windowSize=13
 baseline="y"
-
+connectedOutput="n"
 
 # Baseline experiments
 count=1
@@ -24,5 +24,5 @@ do
     echo "Running Baseline: hidden layer size -> $i" >> "${outputDirectory}/baseline.log"
     outputFile="${outputDirectory}/baseline_${numHiddenLayers}nhl_${i}hls_${windowSize}ws"
     count=$(($count + 1))
-    java -jar deepNetwork.jar $trainFilename "none" $windowSize $numHiddenLayers $i $iterations $outputDirectory $baseline > $outputFile
+    java -jar deepNetwork.jar $trainFilename "none" $windowSize $numHiddenLayers $i $iterations $outputDirectory $baseline $connectedOutput > $outputFile
 done

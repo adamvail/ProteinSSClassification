@@ -379,7 +379,7 @@ public class BaselineNeuralNetwork {
 		
 		for(int i = 0; i < allUnits.get(allUnits.size() - 1).size(); i++){
 			//writeOutput(allUnits.get(allUnits.size() - 1).get(i).getValue() + " ");
-			System.out.print(allUnits.get(allUnits.size() - 1).get(i).getValue() + " ");
+			//System.out.print(allUnits.get(allUnits.size() - 1).get(i).getValue() + " ");
 			
 			Unit output = allUnits.get(allUnits.size() - 1).get(i);
 			if(output.getValue() > highestOutput){
@@ -388,7 +388,7 @@ public class BaselineNeuralNetwork {
 			}
 		}
 		//writeOutput("\n");
-		System.out.println();
+		//System.out.println();
 		
 		switch(winner){
 		case 0:
