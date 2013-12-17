@@ -59,7 +59,7 @@ public class CrossValidation {
 			if(i % group_size == 0){
 				group_index++;
 				if(group_index > degree + 1){
-					System.out.println("Too many chunks: " + group_index);
+				//	System.out.println("Too many chunks: " + group_index);
 				}
 			}
 		}

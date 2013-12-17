@@ -19,11 +19,11 @@ public class ProteinSSClassification {
 	
 	public ProteinSSClassification(String trainFilename, String testFilename,  int windowSize, int numHiddenLayers,
 			int hiddenLayerSize, int iterations, String outputDir, boolean baseline, boolean traditionalOutput, double decayBy,
-			boolean ensemble){
+			boolean ensemble, int numEnsembles){
 
 		if(ensemble){
 			System.out.println("Creating ensemble");
-			NeuralNetEnsemble NNEnsemble = new NeuralNetEnsemble(trainFilename, testFilename, hiddenLayerSize, windowSize, 5);
+			NeuralNetEnsemble NNEnsemble = new NeuralNetEnsemble(trainFilename, testFilename, hiddenLayerSize, windowSize, numEnsembles);
 		}
 		else if(baseline) {
 			runBaseline(trainFilename, testFilename, hiddenLayerSize, windowSize, outputDir);
@@ -43,7 +43,7 @@ public class ProteinSSClassification {
 		String date = c.get(Calendar.YEAR)+"-"+c.get(Calendar.MONTH)+"-"+c.get(Calendar.DAY_OF_MONTH);
 		String time = c.get(Calendar.HOUR_OF_DAY)+":"+c.get(Calendar.MINUTE)+":"+c.get(Calendar.SECOND);
 		String outputFilenameBase = date + "_" + time + "_" + numHiddenLayers + "hl_" + hiddenLayerSize + "hls_" + windowSize + "ws";
-				
+		/*	
 		if(testFilename == null) {
 			data = CrossValidation.processData(crossValidationDegree, trainFilename);			
 		}
@@ -51,8 +51,8 @@ public class ProteinSSClassification {
 			System.out.println("Using UCI data");
 			data = CrossValidation.processData(trainFilename, testFilename);
 		}
+		*/
 		
-		/*
 		data = new ArrayList<ProteinDataSet>();
 		ProteinDataSet pdata = new ProteinDataSet();
 		pdata.addProteinToTrain(new Protein("Y", "h"));
@@ -70,7 +70,7 @@ public class ProteinSSClassification {
 		pdata.addProteinToTrain(new Protein("YYF", "hhe"));
 		pdata.addProteinListToTest(pdata.getTrain());
 		data.add(pdata);	
-		*/	
+		
 		
 		int iter = 1;
 		// Loop through all our data with the given parameters
@@ -86,7 +86,7 @@ public class ProteinSSClassification {
 			AutoencoderController controller = new AutoencoderController(d, windowSize, outputFile);
 			controller.learnInitialLayer(hiddenLayerSize, iterations);
 			int decayAmt = (int)(hiddenLayerSize * decayBy);
-			for(int i = 0; i < numHiddenLayers; i++) {
+			for(int i = 0; i < numHiddenLayers - 1; i++) {
 				controller.learnHiddenLayer(hiddenLayerSize - i * decayAmt, iterations);
 			}
 			if(traditionalOutput) {
@@ -164,7 +164,7 @@ public class ProteinSSClassification {
 		// structure classification project
 		
 
-		if(!(args.length == 11)){
+		if(!(args.length == 12)){
 			System.out.println("Usage: ./ProteinSSClassification <protein train> <protein test> " + 
 						"<window size> <number of hidden layers> <hidden layer size> <iterations> <output directory> <baseline> <traditional output>");
 			System.exit(1);
@@ -199,9 +199,10 @@ public class ProteinSSClassification {
 		if(testFilename.equalsIgnoreCase("none")) {
 			testFilename = null;
 		}
+		int numEnsembles = Integer.parseInt(args[11]);
 		
 		ProteinSSClassification classification = new ProteinSSClassification(trainFilename, testFilename, windowSize, 
-					numHiddenLayers, hiddenLayerSize, iterations, outputDir, baseline,traditionalOutput, decayBy, ensemble);		
+					numHiddenLayers, hiddenLayerSize, iterations, outputDir, baseline,traditionalOutput, decayBy, ensemble, numEnsembles);		
 		
 	}
 	
