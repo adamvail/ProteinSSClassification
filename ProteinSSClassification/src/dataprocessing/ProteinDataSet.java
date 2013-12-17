@@ -35,5 +35,9 @@ public class ProteinDataSet {
 	public ArrayList<Protein> getTest(){
 		return this.test;
 	}
+	
+	public void clearTrain() {
+		train.clear();
+	}
 
 }

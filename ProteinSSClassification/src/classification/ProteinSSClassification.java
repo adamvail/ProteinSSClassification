@@ -43,8 +43,7 @@ public class ProteinSSClassification {
 		String date = c.get(Calendar.YEAR)+"-"+c.get(Calendar.MONTH)+"-"+c.get(Calendar.DAY_OF_MONTH);
 		String time = c.get(Calendar.HOUR_OF_DAY)+":"+c.get(Calendar.MINUTE)+":"+c.get(Calendar.SECOND);
 		String outputFilenameBase = date + "_" + time + "_" + numHiddenLayers + "hl_" + hiddenLayerSize + "hls_" + windowSize + "ws";
-	
-		
+
 		if(testFilename == null) {
 			data = CrossValidation.processData(crossValidationDegree, trainFilename);			
 		}
@@ -53,7 +52,6 @@ public class ProteinSSClassification {
 			data = CrossValidation.processData(trainFilename, testFilename);
 		}
 		
-
 		/*
 		data = new ArrayList<ProteinDataSet>();
 		ProteinDataSet pdata = new ProteinDataSet();
@@ -71,9 +69,8 @@ public class ProteinSSClassification {
 
 		pdata.addProteinToTrain(new Protein("YYF", "hhe"));
 		pdata.addProteinListToTest(pdata.getTrain());
-		data.add(pdata);
-		*/	
-		
+		data.add(pdata);	
+		*/
 		
 		int iter = 1;
 		// Loop through all our data with the given parameters
@@ -192,7 +189,6 @@ public class ProteinSSClassification {
 			traditionalOutput = false;
 		}
 		double decayBy = Double.parseDouble(args[9]);
-
 		
 		boolean ensemble = false;
 		if(args[10].equalsIgnoreCase("yes") || args[10].equalsIgnoreCase("y")) {

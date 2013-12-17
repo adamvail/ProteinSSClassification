@@ -311,6 +311,8 @@ public class AutoencoderController {
 	}
 	
 	public void runTestSet() {
+		data.clearTrain();
+		
 		ArrayList<ArrayList<Double>> procData = new ArrayList<ArrayList<Double>>();
 		ArrayList<STRUCTURE> structs = new ArrayList<STRUCTURE>();		
 		

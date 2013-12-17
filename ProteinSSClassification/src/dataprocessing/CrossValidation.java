@@ -16,9 +16,6 @@ public class CrossValidation {
 		ArrayList<ProteinDataSet> data = new ArrayList<ProteinDataSet>();
 		ProteinDataSet dataSet = new ProteinDataSet();
 		
-//		ArrayList<Protein> train = new ArrayList<Protein>();
-//		train.addAll(readData(trainName).subList(0, 50));
-		
 		dataSet.addProteinListToTrain(readData(trainName));
 		dataSet.addProteinListToTest(readData(testName));
 		

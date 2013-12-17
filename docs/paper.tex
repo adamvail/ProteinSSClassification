@@ -1,0 +1,120 @@
+\documentclass[]{article}
+%\usepackage{verbatim}
+%\usepackage[dvips]{graphicx}
+%\usepackage{pslatex}
+\title{Classifying Protein Secondary Structures through Deep Network Learning}
+\author{Stephanie deWet and Adam Vail}
+
+\begin{document}
+\maketitle
+
+\section{Introduction}
+\label{subsec:intro}
+Predicting the underlying 3D structure of a protein from its amino acid sequence is a significant problem in structural molecular biology.
+An important subproblem of this is to predict complex local structures, or secondary structures, from the amino acid sequence.  
+The secondary structure problem has been attacked in a variety of ways, including with x-ray crystallography, biophysical models, and machine learning models.
+
+Within in the field of machine learning, a variety of methods have been applied  over the past twenty years, with varying results. 
+The majority of early work was done using standard neural networks with zero or one hidden layers resulting in the vast majority falling below 70\% accuracy.
+The recent rise in popularity in deep networks (i.e. neural networks with multiple hidden layers) led us to investigate their accuracy in this problem space.
+
+The common method of encoding amino acids uses large input vectors with an extremely sparse 1-ok-k representation.
+Deep networks have the ability to reduce the dimensionality of large sparse feature spaces and are potentially well suited to simplifying the secondary structure problem.
+
+\section{Related Works}
+\label{subsec:relatedworks}
+One of the earliest studies in this field was conducted by Qian and Sejnowski \cite{Qian} in 1988.
+They experimented with using perceptrons and standard back-propagated single hidden layer neural networks.
+They achieved results of 63.4\% accuracy which provides us with a reference point for our baselines.
+
+Stolorz et al. combined perceptrons with bayesian methods to probabilistically inject domain knowledge into their model.
+The combination of these two methods yielded an improvement over Qian with an accuracy of 64.4\%
+
+Rost and Sander experimented with more complex network structures similar to deep networks.
+They created an ensemble of complex networks consisting of two layers of standard single hidden layer neural networks, with the output of the first being the input of the second.
+Within the ensemble, each network was trained using varying parameters in order to create separation between the models.
+A majority vote was used to produce the final output which was modified in special cases using specific domain knowledge.
+This method produced a significant increase in accuracy achieving 70.8\%.
+
+\section{Method}
+As alluded to in section \ref{subsec:intro}, our hypothesis is that a deep network has the ability to outperform a standard neural network on the protein secondary structure classification
+problem.
+Our objective is to find the optimal tuning of the deep network to yield the best predictive accuracy.
+
+\subsection{Deep Networks Consisting of Stacked Autoencoders}
+We choose a standard approach to creating a deep network by stacking varying numbers of autoencoders \cite{Hinton} which feed into a set of output units.
+An autoencoder is a neural network with a single hidden layer that is trained using backpropagation to reproduce its inputs as outputs.
+When there are less hidden units then inputs, the autoencoders enforces a more compact representation of the feature vector.
+The process of creating a deep network consists of training a set stacked autoencoders where each successive autoencoder's inputs are the previous autoencoder's hidden layer.
+
+\subsubsection{Input Encoding}
+Our training data consists of a set of proteins, each of which is a variable length sequence of amino acids.
+Each amino acid in the chain can take on one of twenty discrete values.
+Therefore, there are two issues that must be overcome to use an amino acid sequence as input to a neural network: handling variable length inputs and modeling discrete values.
+
+We model the discrete values by using a 1-of-k encoding.
+Each amino acid is represented by twenty input nodes, one for each of its potential values.
+Of the twenty input nodes, we set the input node corresponding to the amino acid's value to one and set all others to zero.
+This was chosen because we did not want to impose an ordering on the values of the amino acid or to make certain values look artificially closer to each other.
+Rost and Qian chose a similar encoding.
+
+In order to handle variable length inputs and the fact that protein sequences tend to be quite long, we chose to use a sliding window over the sequence.
+For every sliding window the goal is to classify the secondary structure of the amino acid at the center of the window.
+The effect of changing the window size changes the impact of neighbors on the central amino acid's classification.
+The challenge of using a sliding window is handling the amino acids that reside within half the window size of either end of the sequence.
+We have chosen to model the ends of the sequence by setting each nonexistent (due to being off the end of the sequence) amino acid's twenty input nodes all to zero.
+This method of using a sliding window was also used by Rost and Qian.
+
+\subsubsection{Output Layer}
+Our three classifications are the coarse secondary structures: alpha helix, beta sheet, or loop (known in some of the literature as coil).
+We represent each of these possibilities with an output unit, where the highest value of the three output units is chosen in a winner-take-all fashion.
+These outputs are attached to the hidden layer of the final autoencoder, and the resultant perceptrons are trained with back propagation.
+We use a sigmoid function in all of the hidden and output units.
+
+\subsection{Modifications to the Basic Algorithm}
+We have run some tests with each of the following modifications to the deep network.
+
+\subsubsection{Decaying hidden layer size}
+Because then input is a large sparse array, a more compact representation is desirable.
+We use a decay factor to decrease the size of each stacked hidden layer, incrementally reducing the size of the feature space.
+This is designed to find underlying structures in the data.
+
+\subsubsection{Additional Connections to Output Units}
+Due to the fact that the autoencoders find a compact representation of the data, we wanted to see whether we were losing valuable information in hidden layers.
+We modified the output layer to connect to every input and hidden unit, so that the final layer has inputs from every layer of the deep network.
+We then trained the final layer as a giant perceptron, and continued to use a winner-take-all final prediction.
+
+\subsection{Baseline}
+Because the related works in section \ref{subsec:relatedworks} all used domain knowledge in some form, we developed our own baseline model for comparison to our deep network.
+The baseline is a standar neural network using a single hidden layer and trained with back propagation.
+
+\subsubsection{Ensemble of Neural Networks}
+The accuracy gained by Rost from the use of an ensemble inspired us to use an ensemble as well.
+Unfortunately, due to the time complexity of convergence and limitations of physical compute resources, we were only able to develop this for the simpler baseline neural network.
+A majority vote on the outputs of the individual neural networks was used to determine the final output of the ensemble.
+
+\begin{thebibliography}{9}
+
+\bibitem{Hinton}
+G.E. Hinton and R. R. Salakhutdinov,
+   `` Reducing the Dimensionality of Data with Neural Networks"
+   in \emph{Science}, 2006.
+
+\bibitem{Qian}
+Ning Qian and Terrence J. Sejnowski,
+  `` Predicting the Secondary Structure of Globular Proteins Using Neural Network Models"
+  in \emph{J. Mol. Bio.}, 1988.
+
+\bibitem{Rost}
+Burkhard Rost and Christ Sander,
+  `` Prediction of Protein Secondary Structures at Bettter than 70\% Accuracy"
+  in \emph{J. Mol. Bio.}, 1993.
+
+\bibitem{Stolorz}
+Paul Stolorz, Alan Lapedes, and Yuan Xia,
+   `` Predicting Protein Secondary Structure Using Neural Net and Statistical Methods"
+   in \emph{J. Mol. Bio.}, 1992.
+
+\end{thebibliography}
+
+\end{document}
