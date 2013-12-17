@@ -43,7 +43,7 @@ if __name__ == '__main__':
     pyplot.xlabel("Number of Units in Hidden Layer")
     pyplot.xlim(0, 225)
     pyplot.ylim(40, 70)
-    pyplot.ylabel("Accuracy (%)")
+    pyplot.ylabel("Average Accuracy Across Folds (%)")
     pyplot.title("Hidden Layer Size vs Accuracy in Baseline Neural Network")
     pyplot.savefig("%s.png" % output_file, bbox_inches='tight')
     pyplot.show()

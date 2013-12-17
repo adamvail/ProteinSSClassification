@@ -38,12 +38,12 @@ if __name__ == '__main__':
     
 #    pyplot.legend(loc="upper left")
     for i in range(len(m)):
-        pyplot.text(m[i], accuracies[i] + 1, m[i])
+        pyplot.text(m[i], accuracies[i] + .5, m[i])
 
     pyplot.title("Sliding Window Size vs Accuracy in Baseline Neural Network")
     pyplot.xlabel("Number of Amino Acids per Window")
-    pyplot.ylabel("Accuracy (%)")
-    pyplot.xlim(3, 20)
-    pyplot.ylim(40, 70)
+    pyplot.ylabel("Average Accuracy Across Folds (%)")
+    pyplot.xlim(5, 19)
+    pyplot.ylim(50, 60)
     pyplot.savefig("%s.png" % output_file, bbox_inches='tight')
     pyplot.show()

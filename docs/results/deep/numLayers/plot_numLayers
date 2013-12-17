@@ -44,7 +44,7 @@ if __name__ == '__main__':
 
     pyplot.title("Number of Hidden Layers vs Accuracy using Stacked Autoencoders")
     pyplot.xlabel("Number of Hidden Layers")
-    pyplot.ylabel("Accuracy (%)")
+    pyplot.ylabel("Average Accuracy Across Folds (%)")
     pyplot.xlim(0, 12)
     pyplot.ylim(50, 55)
     pyplot.savefig("%s.png" % output_file, bbox_inches='tight')

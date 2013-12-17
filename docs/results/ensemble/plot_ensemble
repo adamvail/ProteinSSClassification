@@ -41,7 +41,7 @@ if __name__ == '__main__':
 
     pyplot.title("Ensemble Size vs Accuracy using Baseline Neural Networks")
     pyplot.xlabel("Number of Neural Networks per Ensemble")
-    pyplot.ylabel("Accuracy (%)")
+    pyplot.ylabel("Average Accuracy Across Runs (%)")
     pyplot.xlim(2, 8)
     pyplot.ylim(55, 65)
     pyplot.savefig("%s.png" % output_file, bbox_inches='tight')
