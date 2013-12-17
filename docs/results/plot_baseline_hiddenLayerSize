@@ -1,0 +1,56 @@
+#!/usr/bin/env python
+import sys
+from matplotlib import pyplot
+
+if __name__ == '__main__':
+
+    input_file = sys.argv[1]
+    output_file = sys.argv[2]
+
+    m = []
+    accuracies = []
+
+    values = {}
+
+    values = open(input_file, "r")
+    for line in values:
+        elements = line.split()
+        x = int(elements[0])
+        y = float(elements[1])
+        if x not in values:
+            values[x] = []
+        values[x].append(y)
+
+    for x_coord in values:
+        avg = 0.0
+        for val in values[x_coord]:
+            avg += values[x_coord]
+        m.append(x_coord)
+        accuracies.append(avg / len(values[x_coord]))
+
+        print m
+        print accuracies
+
+#    n_neg_y = []
+#    n_pos_y = []
+   
+    
+    pyplot.figure()
+#    pyplot.errorbar(m_s, n_accuracies, yerr=[n_neg_y, n_pos_y], linestyle='-', marker='o', label="Naive")
+#    pyplot.errorbar(m_s, t_accuracies, yerr=[t_neg_y, t_pos_y], linestyle='-', marker='o',  label="TAN")
+    pyplot.plot(m, accuracies, linestyle='-', marker='o')
+#    pyplot.plot(m_s, t_accuracies, linestyle='-', marker='o', label="TAN")
+    
+#    for i in range(len(m_s)):
+#        pyplot.text(m_s[i] - 3, n_accuracies[i] + 2, n_accuracies[i])
+#        pyplot.text(m_s[i] - 3, t_accuracies[i] + 2, t_accuracies[i])
+
+    pyplot.legend(loc="upper left")
+
+    pyplot.xlabel("Number of Units in Hidden Layer")
+    pyplot.xlim(0, 150)
+    pyplot.ylim(35, 75)
+    pyplot.ylabel("Accuracy (%)")
+    pyplot.title("Hidden Layer Size vs Accuracy in Baseline Neural Network")
+    pyplot.savefig("%s.png" % output_file, bbox_inches='tight')
+    pyplot.show()
