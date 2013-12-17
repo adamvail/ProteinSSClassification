@@ -45,7 +45,7 @@ Our objective is to find the optimal tuning of the deep network to yield the bes
 We choose a standard approach to creating a deep network by stacking varying numbers of autoencoders \cite{Hinton} which feed into a set of output units.
 An autoencoder is a neural network with a single hidden layer that is trained using backpropagation to reproduce its inputs as outputs.
 When there are less hidden units then inputs, the autoencoders enforces a more compact representation of the feature vector.
-The process of creating a deep network consists of training a set stacked autoencoders where each successive autoencoder's inputs are the previous autoencoder's hidden layer.
+The process of creating a deep network consists of training a set stacked autoencoders using stochastic gradient descent where each successive autoencoder's inputs are the previous autoencoder's hidden layer.
 
 \subsubsection{Input Encoding}
 Our training data consists of a set of proteins, each of which is a variable length sequence of amino acids.
@@ -68,7 +68,7 @@ This method of using a sliding window was also used by Rost and Qian.
 \subsubsection{Output Layer}
 Our three classifications are the coarse secondary structures: alpha helix, beta sheet, or loop (known in some of the literature as coil).
 We represent each of these possibilities with an output unit, where the highest value of the three output units is chosen in a winner-take-all fashion.
-These outputs are attached to the hidden layer of the final autoencoder, and the resultant perceptrons are trained with back propagation.
+These outputs are attached to the hidden layer of the final autoencoder, and the resultant perceptrons are trained with back propagation using stochastic gradient descent.
 We use a sigmoid function in all of the hidden and output units.
 
 \subsection{Modifications to the Basic Algorithm}
@@ -85,13 +85,19 @@ We modified the output layer to connect to every input and hidden unit, so that 
 We then trained the final layer as a giant perceptron, and continued to use a winner-take-all final prediction.
 
 \subsection{Baseline}
-Because the related works in section \ref{subsec:relatedworks} all used domain knowledge in some form, we developed our own baseline model for comparison to our deep network.
-The baseline is a standar neural network using a single hidden layer and trained with back propagation.
+All previous work in section \ref{subsec:relatedworks} used domain knowledge in some form, we developed our own baseline model for comparison to our deep network.
+The baseline is a standard neural network using a single hidden layer and trained with back propagation using stochastic gradient descent.
 
 \subsubsection{Ensemble of Neural Networks}
 The accuracy gained by Rost from the use of an ensemble inspired us to use an ensemble as well.
 Unfortunately, due to the time complexity of convergence and limitations of physical compute resources, we were only able to develop this for the simpler baseline neural network.
 A majority vote on the outputs of the individual neural networks was used to determine the final output of the ensemble.
+
+\subsection{Verification}
+All code for the baseline neural network and the deep network were verified by hand using small examples (no more than sequences of length greater than 5).
+Specifically, we traced examples through our perceptron, standard single hidden layer neural network, autoencoder, and stacked autoencoders.
+One detail of note, the small examples that were used for verification consistently required at least 1500 iterations over all the training data in order for the weights to converge.
+Therefore, after many hours of debugging, we are confident the functionality of our learners are correct. 
 
 \begin{thebibliography}{9}
 
