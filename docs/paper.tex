@@ -1,7 +1,6 @@
-\documentclass[]{article}
+\documentclass[letterpaper,twocolumn,12pt]{article}
 %\usepackage{verbatim}
-%\usepackage[dvips]{graphicx}
-%\usepackage{pslatex}
+\usepackage[]{graphicx}
 \title{Classifying Protein Secondary Structures through Deep Network Learning}
 \author{Stephanie deWet and Adam Vail}
 
@@ -72,6 +71,7 @@ These outputs are attached to the hidden layer of the final autoencoder, and the
 We use a sigmoid function in all of the hidden and output units.
 
 \subsection{Modifications to the Basic Algorithm}
+\label{subsec:mods}
 We have run some tests with each of the following modifications to the deep network.
 
 \subsubsection{Decaying hidden layer size}
@@ -95,31 +95,77 @@ A majority vote on the outputs of the individual neural networks was used to det
 
 \subsection{Verification}
 All code for the baseline neural network and the deep network were verified by hand using small examples (no more than sequences of length greater than 5).
-Specifically, we traced examples through our perceptron, standard single hidden layer neural network, autoencoder, and stacked autoencoders.
+Specifically, we traced examples through a perceptron, standard single hidden layer neural network, autoencoder, and stacked autoencoders verifying their correctness.
 One detail of note, the small examples that were used for verification consistently required at least 1500 iterations over all the training data in order for the weights to converge.
 Therefore, after many hours of debugging, we are confident the functionality of our learners are correct. 
 
+\section{Empirical Evaluation}
+As discussed in section \ref{subsec:intro}, the parameters we can optimize are sliding window size, hidden layer size, and number of hidden layers.
+We constructed experiments to evaluate various settings of these parameters using both the deep network as well as the baseline neural network.
+Due to the fact that the baseline consists of a single hidden layer, it converges more quickly that the deep network.
+Therefore, we used results from the baseline to inform our choices of initial parameter settings when testing the deep network of autoencoders.
+The basic algorithm modifications described in \ref{subsec:mods} were then evaluated using the best parameter settings from the other experiments.
+
+\subsection{Dataset}
+The datasets used by Rost and Qian were curated with significant domain knowledge therefore we chose to use a combination of these datasets.
+Qian's dataset is currently hosted by the University of California - Irvine's Machine Learning Repository \cite{uci}.
+We used this data without any modification as it was already divided into a 91 protein training set and a test set of size 15 (resulting in 3500 windows of size 13).
+The Rost data consists of 124 proteins.
+Unfortunately, the exact data is not hosted for public use.
+Therefore, we gathered the listed proteins using the DSSP database \cite{DSSP} to provide labels.
+We followed the procedure in \cite{Rost} to group the eight secondary structure classes provided by DSSP into the three standard classes mentioned above.
+
+
+\begin{figure}[ht!]
+\centering
+\includegraphics[width=65mm]{.png}
+\caption{Informative caption here}
+\label{Label here}
+\end{figure}
+
+\section{Discussion}
+
+\section{Future Work}
+
+\section{Conclusion}
+
 \begin{thebibliography}{9}
+
 
 \bibitem{Hinton}
 G.E. Hinton and R. R. Salakhutdinov,
-   `` Reducing the Dimensionality of Data with Neural Networks"
+   `` Reducing the dimensionality of data with neural networks"
    in \emph{Science}, 2006.
+
+\bibitem{DSSP}
+Joosten RP, Te Beek TAH, Krieger E, Hekkelman ML, Hooft RWW, Schneider R, Sander C, Vriend G,
+   `` A series of PDB related databases for everyday needs"
+   in \emph{NAR}, 2010.
+
+\bibitem{DSSP2}
+Kabsch W, Sander C,
+   `` Dictionary of protein secondary structure: pattern recognition of hydrogen-bonded and geometrical features"
+   in \emph{Biopolymers}, 1983.
 
 \bibitem{Qian}
 Ning Qian and Terrence J. Sejnowski,
-  `` Predicting the Secondary Structure of Globular Proteins Using Neural Network Models"
+  `` Predicting the secondary structure of globular proteins using neural network models"
   in \emph{J. Mol. Bio.}, 1988.
 
 \bibitem{Rost}
 Burkhard Rost and Christ Sander,
-  `` Prediction of Protein Secondary Structures at Bettter than 70\% Accuracy"
+  `` Prediction of protein secondary structures at bettter than 70\% accuracy"
   in \emph{J. Mol. Bio.}, 1993.
 
 \bibitem{Stolorz}
 Paul Stolorz, Alan Lapedes, and Yuan Xia,
-   `` Predicting Protein Secondary Structure Using Neural Net and Statistical Methods"
+   `` Predicting protein secondary structure using neural net and statistical methods"
    in \emph{J. Mol. Bio.}, 1992.
+
+\bibitem{uci}
+   C.L. Blake and C.J. Merz,
+   `` UCI repository of machine learning databases"
+   \textbf{http://archive.ics.uci.edu/ml/datasets/Molecular+Biology+(Protein+Secondary+Structure)}
 
 \end{thebibliography}
 
