@@ -1,0 +1,49 @@
+#!/usr/bin/env python
+import sys
+from matplotlib import pyplot
+
+if __name__ == '__main__':
+
+    input_file = sys.argv[1]
+    output_file = sys.argv[2]
+
+    m = []
+    accuracies = []
+
+    data = open(input_file, "r")
+    values = {}
+
+    for line in data:
+        elements = line.split()
+        x = int(elements[0])
+        y = float(elements[1])
+        if x not in values:
+            values[x] = []
+        values[x].append(y)
+
+    all_x = values.keys()
+    all_x.sort()
+    for x_coord in all_x:
+        avg = 0.0
+        for val in values[x_coord]:
+            avg += val
+        m.append(x_coord)
+        accuracies.append(avg / len(values[x_coord]))
+
+    print m
+    print accuracies
+
+    pyplot.figure()
+    pyplot.plot(m, accuracies, linestyle='-', marker='o')
+    
+#    pyplot.legend(loc="upper left")
+    for i in range(len(m)):
+        pyplot.text(m[i], accuracies[i] + 1, m[i])
+
+    pyplot.title("Sliding Window Size vs Accuracy in Baseline Neural Network")
+    pyplot.xlabel("Number of Amino Acids per Window")
+    pyplot.ylabel("Accuracy (%)")
+    pyplot.xlim(3, 20)
+    pyplot.ylim(40, 70)
+    pyplot.savefig("%s.png" % output_file, bbox_inches='tight')
+    pyplot.show()
