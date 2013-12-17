@@ -11,12 +11,13 @@ hiddenLayerSize=15 # default value provided by baseline tests
 iterations=5 # increase the number of iterations as we go
 windowSize=13
 baseline="n"
+connectedOutput="n"
 
 # Test the number of hidden layers
 for i in 1 2 5 10
 do
     outputFile="${outputDirectory}/deep_${numHiddenLayers}nhl_${hiddenLayerSize}hls_${windowSize}ws_${i}iters"
     echo "Number of iterations -> $i" >> "${outputDirectory}/deep.log"
-    java -jar deepNetwork.jar $trainFilename "none" $windowSize $numHiddenLayers $hiddenLayerSize $i $outputDirectory $baseline > $outputFile
+    java -jar deepNetwork.jar $trainFilename "none" $windowSize $numHiddenLayers $hiddenLayerSize $i $outputDirectory $baseline $connectedOutput > $outputFile
     echo "Done" >> "${outputDirectory}/deep.log"
 done
