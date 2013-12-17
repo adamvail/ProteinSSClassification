@@ -3,8 +3,17 @@ import sys
 from matplotlib import *
 
 result_file = open(sys.argv[1], "r")
-x_coordinate = sys.argv[2]
-output_file = open(sys.argv[3], "w")
+desired_class = sys.argv[2]
+output_file = open(sys.argv[3]+"_"+desired_class, "w")
+output_signs = [-1.0, -1.0, -1.0]
+if desired_class = "LOOP":
+    output_signs[2] = 1.0
+elif desired_class = "BETA":
+    output_signs[1] = 1.0
+else:
+    output_signs[0] = 1.0
+
+
 # Raw contains: [alpha_val beta_val loop_val predicted_class actual_class] 
 raw = []
 
@@ -30,29 +39,29 @@ for line in result_file:
 #for item in raw:
 #    output_file.write("%s %s %s %s %s\n" % (item[0], item[1], item[2], item[3], item[4]))
 
-# Create ROC for LOOP vs all
-sorted_LOOP = []
+# Create ROC for 1 vs all
+sorted_SET = []
 total_tp = 0
 total_fp = 0
 for item in raw:
-    if item[3] == "LOOP":  # If it's predicted to be a loop
-        confidence = float(item[2]) - float(item[1]) - float(item[0])
+    if item[3] == desired_class:  # If it's predicted to be a loop
+        confidence = output_signs[0] * float(item[0]) + output_signs[1] * float(item[1]) + output_signs[2] * float(item[2])
         true_pos = False
-        if item[4] == "LOOP":  # If it's actually a loop
+        if item[4] == desired_class:  # If it's actually a loop
             true_pos = True
             total_tp = total_tp + 1
         else:
             total_fp = total_fp + 1
         new_vec = [confidence, true_pos]
-        sorted_LOOP.append(new_vec)
+        sorted_SET.append(new_vec)
 
-sorted_LOOP.sort(reverse=True, key=lambda tup: tup[0])
+sorted_SET.sort(reverse=True, key=lambda tup: tup[0])
 count_tp = 0
 count_fp = 0
 prev_type = ""
 curve_x = []
 curve_y = []
-for item in sorted_LOOP:
+for item in sorted_SET:
     current_type = ""
     if item[1] == True:
         current_type = "TP"
