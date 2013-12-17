@@ -113,6 +113,10 @@ public class NeuralNetworkController {
 			}	
 			weights_old = weights;
 			weights = getWeights(allUnits.size() - 2);
+			for(int i = 0; i < weights.size(); i++){
+				System.out.print(weights.get(i) + " ");
+			}
+			System.out.println();
 			iter++;
 		}
 		System.out.println("iters to train: " + iter + 

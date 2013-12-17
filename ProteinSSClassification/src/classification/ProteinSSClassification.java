@@ -43,7 +43,8 @@ public class ProteinSSClassification {
 		String date = c.get(Calendar.YEAR)+"-"+c.get(Calendar.MONTH)+"-"+c.get(Calendar.DAY_OF_MONTH);
 		String time = c.get(Calendar.HOUR_OF_DAY)+":"+c.get(Calendar.MINUTE)+":"+c.get(Calendar.SECOND);
 		String outputFilenameBase = date + "_" + time + "_" + numHiddenLayers + "hl_" + hiddenLayerSize + "hls_" + windowSize + "ws";
-				
+		
+		
 		if(testFilename == null) {
 			data = CrossValidation.processData(crossValidationDegree, trainFilename);			
 		}
@@ -70,7 +71,7 @@ public class ProteinSSClassification {
 		pdata.addProteinToTrain(new Protein("YYF", "hhe"));
 		pdata.addProteinListToTest(pdata.getTrain());
 		data.add(pdata);	
-		*/	
+		*/
 		
 		int iter = 1;
 		// Loop through all our data with the given parameters
@@ -84,10 +85,10 @@ public class ProteinSSClassification {
 			*/
 			
 			AutoencoderController controller = new AutoencoderController(d, windowSize, outputFile);
-			controller.learnInitialLayer(hiddenLayerSize, iterations);
+			controller.learnInitialLayer(hiddenLayerSize, 25);
 			int decayAmt = (int)(hiddenLayerSize * decayBy);
-			for(int i = 0; i < numHiddenLayers; i++) {
-				controller.learnHiddenLayer(hiddenLayerSize - i * decayAmt, iterations);
+			for(int i = 0; i < numHiddenLayers - 1; i++) {
+				controller.learnHiddenLayer(hiddenLayerSize - i * decayAmt, 5);
 			}
 			if(traditionalOutput) {
 				controller.learnOutputLayer(iterations);
@@ -186,7 +187,7 @@ public class ProteinSSClassification {
 		if(args[8].equalsIgnoreCase("no") || args[8].equalsIgnoreCase("n")) {
 			traditionalOutput = false;
 		}
-		double decayBy = 1.0;
+		double decayBy = 0;
 		if (args.length == 9) {
 			decayBy = Double.parseDouble(args[9]);
 		}
