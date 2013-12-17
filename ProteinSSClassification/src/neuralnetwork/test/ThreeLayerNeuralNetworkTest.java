@@ -18,7 +18,7 @@ public class ThreeLayerNeuralNetworkTest {
 			inputLayer.add(new Unit(false));
 		}
 		NeuralNetworkController netAE = new NeuralNetworkController(inputLayer, 5, null);
-		netAE.setMaxIterations(10000);
+		netAE.setMaxIterations(500);
 
 		// Input: exactly 1 unit turned on
 		// Teach: alpha if units 0/1 turned on, beta if units 2/3 turned on,

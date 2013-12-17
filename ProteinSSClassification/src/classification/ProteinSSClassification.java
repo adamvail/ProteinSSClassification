@@ -71,7 +71,6 @@ public class ProteinSSClassification {
 		pdata.addProteinListToTest(pdata.getTrain());
 		data.add(pdata);	
 		*/
-
 		
 		int iter = 1;
 		// Loop through all our data with the given parameters
@@ -88,6 +87,8 @@ public class ProteinSSClassification {
 			controller.learnInitialLayer(hiddenLayerSize, iterations);
 			int decayAmt = (int)(hiddenLayerSize * decayBy);
 			for(int i = 0; i < numHiddenLayers - 1; i++) {
+				writeOutput("Begin: learn Hidden layer of size " + (hiddenLayerSize - i * decayAmt));
+				System.out.println("Begin: learn Hidden layer of size " + (hiddenLayerSize - i * decayAmt));
 				controller.learnHiddenLayer(hiddenLayerSize - i * decayAmt, iterations);
 			}
 			if(traditionalOutput) {
@@ -187,7 +188,8 @@ public class ProteinSSClassification {
 		if(args[8].equalsIgnoreCase("no") || args[8].equalsIgnoreCase("n")) {
 			traditionalOutput = false;
 		}
-		double decayBy = 0;
+
+		double decayBy = 0.0;
 		if (args.length == 9) {
 			decayBy = Double.parseDouble(args[9]);
 		}
