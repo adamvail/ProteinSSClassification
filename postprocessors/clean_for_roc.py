@@ -1,17 +1,24 @@
 #!/usr/bin/env python
 import sys
 from matplotlib import *
+from matplotlib.pyplot import *
+
+output_folder="docs/results/"  # From base level of repo
 
 result_file = open(sys.argv[1], "r")
 desired_class = sys.argv[2]
-output_file = open(sys.argv[3]+"_"+desired_class, "w")
+output_file = open(output_folder+sys.argv[3]+"_"+desired_class, "w")
 output_signs = [-1.0, -1.0, -1.0]
-if desired_class = "LOOP":
+if desired_class == "LOOP":
     output_signs[2] = 1.0
-elif desired_class = "BETA":
+elif desired_class == "BETA":
     output_signs[1] = 1.0
 else:
     output_signs[0] = 1.0
+plot_smoothed = False
+if (sys.argv[4]=='y' or sys.argv[4]=='Y' or sys.argv[4]=='yes' or sys.argv[4]=='YES'):
+    plot_smoothed = True
+
 
 
 # Raw contains: [alpha_val beta_val loop_val predicted_class actual_class] 
@@ -67,7 +74,7 @@ for item in sorted_SET:
         current_type = "TP"
     else:
         current_type = "FP"
-    if prev_type != current_type:
+    if prev_type != current_type and (plot_smoothed == False or prev_type == "TP"):
         curve_y.append(float(count_tp)/total_tp)
         curve_x.append(float(count_fp)/total_fp)
     prev_type = current_type
@@ -81,8 +88,9 @@ for item in sorted_SET:
 #    output_file.write("%f %s\n" % (item[0], item[1]))
 
 plot(curve_x, curve_y)
+plot([0, .5, 1],[0, .5, 1], linestyle='--')
 xlabel('FPR')
 ylabel('TPR')
-title('ROC curve for LOOP')
-savefig('ROC_LOOP.png')
+title('ROC Curve for ' + desired_class + ' Classification')
+savefig('ROC_' + desired_class + '.png')
 show()
