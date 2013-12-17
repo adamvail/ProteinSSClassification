@@ -41,7 +41,8 @@ public class AutoencoderTest {
 		// Print the input values to the console
 		
 		System.out.println("\nHidden layer 1");
-		controller.learnInitialLayer(5, 10000);
+		int numIter = 1500;
+		controller.learnInitialLayer(5, numIter);
 		//controller.printWeights();
 		for (ArrayList<Double> d: controller.getProcessedData()) {
 			controller.getMostRecentLayer().classifyAutoencoder(d);
@@ -60,7 +61,7 @@ public class AutoencoderTest {
 		ArrayList<ArrayList<Double>> newData = controller.feedDataThroughNetwork();  // Outputs of hidden layer
 
 		System.out.println("\nHidden layer 2");		
-		controller.learnHiddenLayer(5, 10000);
+		controller.learnHiddenLayer(5, numIter);
 		
 		//controller.printWeights();		
 		//controller.getMostRecentLayer().printHiddenWeightsFromInput(0);
@@ -73,7 +74,7 @@ public class AutoencoderTest {
 		}
 		
 		System.out.println("\nOutput layer");
-		controller.learnOutputLayer(10000);
+		controller.learnOutputLayer(numIter);
 		
 		//controller.printWeights();		
 		//controller.getMostRecentLayer().printOutputWeightsFromHiddenLayer();		
