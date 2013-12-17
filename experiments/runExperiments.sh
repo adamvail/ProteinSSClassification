@@ -36,7 +36,7 @@ for i in 1 2 3
 do
     outputFile="${outputDirectory}/deep_${i}nhl_${hiddenLayerSize}hls_${windowSize}ws_${iterations}it"
     echo "Running Deep Network: hidden layer size 15, layer number -> $i, ${iterations} iter" >> "${outputDirectory}/deep.log"
-    java -jar deepNetwork.jar $trainFilename "none" $windowSize $i $hiddenLayerSize $iterations $outputDirectory $baseline > $outputFile
+    java -jar deepNetwork.jar $trainFilename "none" $windowSize $i $hiddenLayerSize $iterations $outputDirectory $baseline 0 > $outputFile
     echo "Done" >> "${outputDirectory}/deep.log"
 done
 
@@ -45,6 +45,6 @@ for i in 1 2 3
 do
     outputFile="${outputDirectory}/deep_${i}nhl_${hiddenLayerSize}hls_${windowSize}ws_${iterations}it"
     echo "Running Deep Network: hidden layer size 26, layer number -> $i, ${iterations} iter" >> "${outputDirectory}/deep.log"
-    java -jar deepNetwork.jar $trainFilename "none" $windowSize $i $hiddenLayerSize $iterations $outputDirectory $baseline > $outputFile
+    java -jar deepNetwork.jar $trainFilename "none" $windowSize $i $hiddenLayerSize $iterations $outputDirectory $baseline 0 > $outputFile
     echo "Done" >> "${outputDirectory}/deep.log"
 done
