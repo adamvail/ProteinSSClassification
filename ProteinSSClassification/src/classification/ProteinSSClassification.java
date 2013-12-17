@@ -84,18 +84,18 @@ public class ProteinSSClassification {
 			*/
 			
 			AutoencoderController controller = new AutoencoderController(d, windowSize, outputFile);
-			controller.learnInitialLayer(hiddenLayerSize, iterations);
+			controller.learnInitialLayer(hiddenLayerSize, 25);
 			int decayAmt = (int)(hiddenLayerSize * decayBy);
 			for(int i = 0; i < numHiddenLayers - 1; i++) {
 				writeOutput("Begin: learn Hidden layer of size " + (hiddenLayerSize - i * decayAmt));
 				System.out.println("Begin: learn Hidden layer of size " + (hiddenLayerSize - i * decayAmt));
-				controller.learnHiddenLayer(hiddenLayerSize - i * decayAmt, iterations);
+				controller.learnHiddenLayer(hiddenLayerSize - i * decayAmt, 10);
 			}
 			if(traditionalOutput) {
 				controller.learnOutputLayer(iterations);
 			}
 			else {
-				controller.learnConnectedOutputLayer(iterations);
+				controller.learnConnectedOutputLayer(10);
 			}
 
 			controller.runTestSet();
