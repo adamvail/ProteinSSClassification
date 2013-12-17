@@ -191,10 +191,8 @@ public class ProteinSSClassification {
 		if(args[8].equalsIgnoreCase("no") || args[8].equalsIgnoreCase("n")) {
 			traditionalOutput = false;
 		}
-		double decayBy = 0.0;
-		if (args.length == 9) {
-			decayBy = Double.parseDouble(args[9]);
-		}
+		double decayBy = Double.parseDouble(args[9]);
+
 		
 		boolean ensemble = false;
 		if(args[10].equalsIgnoreCase("yes") || args[10].equalsIgnoreCase("y")) {
