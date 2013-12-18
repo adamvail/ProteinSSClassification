@@ -152,6 +152,7 @@ Based on these results, in subsequent experiments, we do not use more than 50 hi
 \end{figure}
 
 \subsection{Best Baseline}
+\label{subsec:bestbaseline}
 Our best baseline network used a window size of 13 and a single 15-unit hidden layer to produce an average accuracy of 59.51\%.
 Qian's parameter tuning experiments also showed that different tunings had a relatively small impact on accuracy (less than a percentage point).
 Our parameter tuning experiments (for both baseline and deep network), had a similar outcome.
@@ -204,29 +205,31 @@ Networks using these parameters were trained using the entire training set and t
 
 \subsection{Deep Networks}
 The final deep network has a window size of 13, and 6 hidden layers of size 26.
-Its accuracy is %___\%. FIXME
+When training the final network, we observed that an increase in training time significantly improved the results. 
+We trained with 25, 50, and 100 iterations over the entire training set, achieving 52.26\%, 52.4\%, and 53.21\% accuracy respectively.
+The 100 iteration network does almost a full percentage point better than the best parameter tuning experiment, which was trained with only 10 iterations due to time demands of cross validation.
 
-We created ROC curves to measure the performance of the deep network.
+We created ROC curves to measure the performance of the best deep network.
 Confidence was calculated by subtracting the output values for the two losing nodes from the winning output values.
 Because there are multiple classifications, we can't use the basic 2-classification ROC curve format.
-Instead, we chose to use a one-versus-many ROC curve, which shows the false positive and true positive rates for each class.
+Instead, we chose to use a one-versus-all ROC curve, which shows the false positive and true positive rates for each class.
 
-% discuss concerns 
-% - not as good as the baseline
-% - why?
-% -  not enough iters (verif section) extremely complex
+\begin{figure}[ht!]
+\centering
+\includegraphics[width=65mm]{results/ROC_all_final_deep_net_100it.png}
+\caption{}
+\label{fig:roc}
+\end{figure}
 
-%FIXME FIGURE HERE.
-
-Despite the fact that the accuracy is lower than the baseline, the ROC curves in \ref{fig:roc_alpha} show that for predictions with high confidence, our network predicts the secondary structure well.
+Despite the fact that the accuracy is lower than the baseline, all three ROC curves in \ref{fig:roc} show that the deep network's performance is better than simply guessing.
+Also note that for predictions with high confidence, our network predicts the secondary structure well, particularily BETA classifications.
 
 \subsection{Ensembles}
 Our best deep network performs signifcantly worse than the baseline neural network, so a natural modification is to try using ensembles of networks.
 Since deep networks require significant time complexity, we were unable to train an ensemble of deep networks.
 However, we were able to train an ensemble of simple neural networks with one hidden layer.
-%Figure \ref{fig:baseline_ensemble} shows that 
 An ensemble of three neural networks has an average accuracy of 61.65\%.
-The best baseline neural network settings, as discussed in section %______, FIXME
+The best baseline neural network settings, as discussed in section \ref{subsec:bestbaseline},
 produced an average accuracy of 59.51\%, which is two percentage points lower than the ensemble.
 So, using an ensemble clearly improves the performance of the baseline network, and we hypothesize that deep networks would also benefit from this technique.
 
@@ -243,20 +246,10 @@ So, using an ensemble clearly improves the performance of the baseline network, 
 
 \subsection{Final Comments on Stacked Autoencoders}
 As we mentioned in verification, if we used too few iterations for the network to converge, we saw a significant decrease in the performance.
-We hypothesize that due to the complexity of the data, our final deep network has not converged and that is why its accuracy is so much worse than the baseline.
+Due to the complexity of the data, our final deep network has not fully converged and that is why its accuracy is so much worse than the baseline.
 We are confident that with significantly longer training time (on the order of weeks), the deep network would fully converge.
 
 We still believe that deep networks have the ability to solve the secondary structure problem, but due to the time complexity of learning an effective deep network, other learning methods may be more practical.
-
-% describe results
-% Insert and discuss ROC curves -- should I put ALPHA, BETA, LOOP on one plot?
-% combine into 1????
-\begin{figure}[ht!]
-\centering
-\includegraphics[width=65mm]{results/ROC_all.png}
-\caption{}
-\label{fig:roc}
-\end{figure}
 
 \subsection{Lessons Learned}
 In the process of working on this project, we learned that it is very difficult to understand the re-representations produced by the hidden layers of a large multi-layer network.
