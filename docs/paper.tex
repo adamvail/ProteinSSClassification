@@ -140,6 +140,7 @@ Hidden layer size determines how much we compact the new representation of the i
 Figure \ref{fig:baseline_hidden_layer_size} shows that fewer units in the hidden layer represent the data better.
 This shows that because the input data is extremely sparse, an entire window of amino acids can be encoded in very few hidden nodes.
 Due to time complexity and physical computing resources, we couldn't test any networks with more than 200 hidden units, and could only test a handful of networks with more than 100 units.
+Also, we did not test any networks with size less than the window size.
 Regardless, the data show that smaller numbers of hidden units per layer provide better prediction accuracy.
 Based on these results, in subsequent experiments, we do not use more than 50 hidden units per layer.
 
@@ -150,21 +151,28 @@ Based on these results, in subsequent experiments, we do not use more than 50 hi
 \label{fig:baseline_hidden_layer_size}
 \end{figure}
 
+\subsection{Best Baseline}
+Our best baseline network used a window size of 13 and a single 15-unit hidden layer to produce an average accuracy of 59.51\%.
+Qian's parameter tuning experiments also showed that different tunings had a relatively small impact on accuracy (less than a percentage point).
+Our parameter tuning experiments (for both baseline and deep network), had a similar outcome.
+
 \subsection{Deep Network}
 In deep network tests, we used results from the baseline tests to set the window size to 13 and to choose a few good hidden layer sizes.
 Figure \ref{fig:deep_num_hidden_layers} justifies our use of multiple hidden layer sizes.
-It shows that a larger hidden layer is necessary when there are many hidden layers in the network.
-This is consistent with the results of our single-layer neural network verification test, where a too-small hidden layer would strongly affect the network performance.  
+It shows that a larger hidden layer is necessary when there are many hidden layers in the network, or when an autoencoder is used instead of backpropagation.
+This is consistent with the results of our single-layer neural network verification test, where a too-small hidden layer would strongly affect the network performance.
 In fact, we would expect any issues in early layers to be amplified in later layers, and to be even more obvious in networks with more layers.
+Additionally, the network with fifteen hidden units only experiences small improvements additional hidden layers.
+This is expected, because if information is lost in the first layer, additional hidden layers will not be able to recover it, and that information is lost to the network.
 
 The data show that the best accuracy occurs for a six hidden layer network.
 Without domain knowledge, it's not clear what underlying physical structure each hidden layer represents, so we are unsure why some numbers of layers work better than others.
-However, the network performance consistently increases  until it reaches six layers in size, after which point there is a large drop in accuracy.
+However, the network performance consistently increases until it reaches six layers in size, after which point there is a large drop in accuracy.
 We believe this is because six layers are capable of creating the most compact representation of the data the network can achieve, and additional layers simply introduce noise.
 
 \begin{figure}[ht!]
 \centering
-\includegraphics[width=65mm]{results/deep/deep_numLayers.png}
+\includegraphics[width=65mm]{results/deep/numLayers/deep_numLayers.png}
 \caption{The effect of hidden layer size and number of hidden layers, using a deep network. The best average accuracy (52.5\%) was achieved using 6 hidden layers with 26 units per layer.}
 \label{fig:deep_num_hidden_layers}
 \end{figure}
@@ -181,16 +189,91 @@ With three hidden layers, an initial hidden layer size of 45 and a decay factor 
 
 We hypothesize that this is because the network is being compacted too much at each step, to the point of losing information.
 
+\subsection{Connected Output}
+In order to see if our network was losing information that was available in earlier layers, we tested connecting the output units to every other unit in the graph.
+For a network with 26 hidden units per layer and 3 hidden layers, the result was \textbf{52.20\%} accuracy.
+This is slightly less than the accuracy of our best deep network, with 26 hidden units and 6 layers.
+That implies that the our best deep network did not lose any information between the input and final output layers.
+This modification should not be used with a deeper network, because it makes the final output layer very costly to train because of the explosion in size of the perceptron.
+
 
 \section{Discussion}
+% Determined optimal params - now use test set too
+After completing the parameter tuning experiments above, we chose optimal parameter settings.
+Networks using these parameters were trained using the entire training set and tested with the held-aside test set.
 
+\subsection{Deep Networks}
+The final deep network has a window size of 13, and 6 hidden layers of size 26.
+Its accuracy is %___\%. FIXME
+
+We created ROC curves to measure the performance of the deep network.
+Confidence was calculated by subtracting the output values for the two losing nodes from the winning output values.
+Because there are multiple classifications, we can't use the basic 2-classification ROC curve format.
+Instead, we chose to use a one-versus-many ROC curve, which shows the false positive and true positive rates for each class.
+
+% discuss concerns 
+% - not as good as the baseline
+% - why?
+% -  not enough iters (verif section) extremely complex
+
+%FIXME FIGURE HERE.
+
+Despite the fact that the accuracy is lower than the baseline, the ROC curves in \ref{fig:roc_alpha} show that for predictions with high confidence, our network predicts the secondary structure well.
+
+\subsection{Ensembles}
+Our best deep network performs signifcantly worse than the baseline neural network, so a natural modification is to try using ensembles of networks.
+Since deep networks require significant time complexity, we were unable to train an ensemble of deep networks.
+However, we were able to train an ensemble of simple neural networks with one hidden layer.
+%Figure \ref{fig:baseline_ensemble} shows that 
+An ensemble of three neural networks has an average accuracy of 61.65\%.
+The best baseline neural network settings, as discussed in section %______, FIXME
+produced an average accuracy of 59.51\%, which is two percentage points lower than the ensemble.
+So, using an ensemble clearly improves the performance of the baseline network, and we hypothesize that deep networks would also benefit from this technique.
+
+%\begin{figure}[ht!]
+%\centering
+%\includegraphics[width=65mm]{results/ensemble/ensemble.png}
+%\caption{The effect of different numbers of neural networks on ensemble average accuracy across five runs, using standard neural networks.}
+%\label{fig:baseline_ensemble}
+%\end{figure}
+
+%best baseline: 62.72
+%best ensemble: 63
+%best avg: 3 networks 61.65
+
+\subsection{Final Comments on Stacked Autoencoders}
+As we mentioned in verification, if we used too few iterations for the network to converge, we saw a significant decrease in the performance.
+We hypothesize that due to the complexity of the data, our final deep network has not converged and that is why its accuracy is so much worse than the baseline.
+We are confident that with significantly longer training time (on the order of weeks), the deep network would fully converge.
+
+We still believe that deep networks have the ability to solve the secondary structure problem, but due to the time complexity of learning an effective deep network, other learning methods may be more practical.
+
+% describe results
 % Insert and discuss ROC curves -- should I put ALPHA, BETA, LOOP on one plot?
+% combine into 1????
+\begin{figure}[ht!]
+\centering
+\includegraphics[width=65mm]{results/ROC_all.png}
+\caption{}
+\label{fig:roc}
+\end{figure}
 
-As we mentioned in verication, if we used too few iterations for the network to converge, we saw a significant decrease in the performance of the network.
+\subsection{Lessons Learned}
+In the process of working on this project, we learned that it is very difficult to understand the re-representations produced by the hidden layers of a large multi-layer network.
+The combination of a complicated network and little domain knowledge made it especially challenging to tell whether these re-representations were useful.
+We also learned that deep networks need to be tested very carefully, since they have so many interconnections and weights.
+Overall, we feel that this was a valuable experience, gaining experience in neural networks.
 
 \section{Future Work}
+%TODO
+Ensembles of autoencoders
+Other things than sigmoid
+- sparse autoencoder 
 
 \section{Conclusion}
+%TODO
+
+%TODO Create Abstract
 
 \begin{thebibliography}{9}
 
@@ -228,7 +311,9 @@ Paul Stolorz, Alan Lapedes, and Yuan Xia,
 \bibitem{uci}
    C.L. Blake and C.J. Merz,
    `` UCI repository of machine learning databases"
-   \textbf{http://archive.ics.uci.edu/ml/datasets/Molecular+Biology+(Protein+Secondary+Structure)}
+   \textbf{http://archive.ics.uci.edu/ml/datasets/}
+   \textbf{Molecular+Biology+(Protein+}
+   \textbf{Secondary+Structure)}
 
 \end{thebibliography}
 

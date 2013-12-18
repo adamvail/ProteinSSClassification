@@ -36,7 +36,7 @@ if __name__ == '__main__':
         if "26" in i:
             pyplot.plot(m, accuracies, linestyle='-', marker='o', label="Hidden Layer Sizes of 26")
         elif "15" in i:
-            pyplot.plot(m, accuracies, linestyle='-', marker='o', label="Hidden Layer Sizes of 13")
+            pyplot.plot(m, accuracies, linestyle='-', marker='*', label="Hidden Layer Sizes of 15")
     
     pyplot.legend(loc="upper left")
 #    for i in range(len(m)):
@@ -44,7 +44,7 @@ if __name__ == '__main__':
 
     pyplot.title("Number of Hidden Layers vs Accuracy using Stacked Autoencoders")
     pyplot.xlabel("Number of Hidden Layers")
-    pyplot.ylabel("Accuracy (%)")
+    pyplot.ylabel("Average Accuracy Across Folds (%)")
     pyplot.xlim(0, 12)
     pyplot.ylim(50, 55)
     pyplot.savefig("%s.png" % output_file, bbox_inches='tight')
