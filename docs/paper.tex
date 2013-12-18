@@ -204,9 +204,8 @@ Networks using these parameters were trained using the entire training set and t
 
 \subsection{Deep Networks}
 The final deep network has a window size of 13, and 6 hidden layers of size 26.
-Its accuracy is ___\%.
+Its accuracy is %___\%. FIXME
 
-% FIXME how ROC curve created
 We created ROC curves to measure the performance of the deep network.
 Confidence was calculated by subtracting the output values for the two losing nodes from the winning output values.
 Because there are multiple classifications, we can't use the basic 2-classification ROC curve format.
@@ -227,7 +226,8 @@ Since deep networks require significant time complexity, we were unable to train
 However, we were able to train an ensemble of simple neural networks with one hidden layer.
 %Figure \ref{fig:baseline_ensemble} shows that 
 An ensemble of three neural networks has an average accuracy of 61.65\%.
-The best baseline neural network settings, as discussed in section ______,  produced an average accuracy of 59.51\%, which is two percentage points lower than the ensemble.
+The best baseline neural network settings, as discussed in section %______, FIXME
+produced an average accuracy of 59.51\%, which is two percentage points lower than the ensemble.
 So, using an ensemble clearly improves the performance of the baseline network, and we hypothesize that deep networks would also benefit from this technique.
 
 %\begin{figure}[ht!]
@@ -253,21 +253,21 @@ We still believe that deep networks have the ability to solve the secondary stru
 % combine into 1????
 \begin{figure}[ht!]
 \centering
-\includegraphics[width=65mm]{results/ensemble/ROC_ALPHA.png}
+\includegraphics[width=65mm]{results/ROC_ALPHA.png}
 \caption{}
 \label{fig:roc_alpha}
 \end{figure}
 
 \begin{figure}[ht!]
 \centering
-\includegraphics[width=65mm]{results/ensemble/ROC_BETA.png}
+\includegraphics[width=65mm]{results/ROC_BETA.png}
 \caption{}
 \label{fig:roc_beta}
 \end{figure}
 
 \begin{figure}[ht!]
 \centering
-\includegraphics[width=65mm]{results/ensemble/ROC_LOOP.png}
+\includegraphics[width=65mm]{results/ROC_LOOP.png}
 \caption{}
 \label{fig:roc_loop}
 \end{figure}
