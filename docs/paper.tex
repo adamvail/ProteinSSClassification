@@ -12,7 +12,7 @@ Classifying the secondary structures of proteins is a well-known problem in mole
 Our goal is to explore the potential of applying deep learning methods to this domain.
 We performed an empirical evaluation of deep network parameters on a network of stacked autoencoders.
 We found that our best performance of 53.2\% resulted from parameters of window size 13, 6 hidden layers, and 26 units per hidden layer.
-Unfortunately, this underperforms as compared to other learning methods.
+Unfortunately, this under performs as compared to other learning methods.
 \end{abstract}
 
 \section{Introduction}
@@ -138,7 +138,7 @@ Window size is important since it determines the number of neighbors that can in
 Figure \ref{fig:baseline_window_size} shows that a window size of 13 or 17 is better than a smaller window.
 This is to be expected, because a larger window uses results from sets in a larger neighborhood around the central amino acid.
 However, increasing the window size sharply increased the number of weights that needed to be trained.
-As a compromise between accuraccy and performance, we chose to use a window size of 13 for all other experiments.
+As a compromise between accuracy and performance, we chose to use a window size of 13 for all other experiments.
 
 \begin{figure}[ht!]
 \centering
@@ -194,7 +194,7 @@ In all of the deep network tests until this point, the sizes of all the hidden l
 We modified our algorithm to use a decay factor, so that each hidden layer was some number of units smaller than the previous layer.
 The first hidden layer for these tests has 45 hidden units, so that the final layer sizes are not too small.
 
-We found that these tests worked signifcantly worse than the standard deep networks.
+We found that these tests worked significantly worse than the standard deep networks.
 With three hidden layers and a decay factor of .25, we achieved an average accuracy of 50.37\%.
 With three hidden layers and a decay factor of .33, we achieved an average accuracy of 50.22\%.
 
@@ -207,12 +207,13 @@ This is slightly less than the accuracy of our best deep network, with 26 hidden
 That implies that the our best deep network did not lose any information between the input and final output layers.
 This modification should not be used with a deeper network because it makes the final output layer very costly to train due to the explosion in size of the perceptron.
 
-\section{Final Results and Discussion}
+\section{Results}
 % Determined optimal params - now use test set too
 After completing the parameter tuning experiments above, we chose optimal parameter settings.
 Networks using these parameters were trained using the entire training set and tested with the held-aside test set.
 
 \subsection{Deep Networks}
+\label{subsec:deepnetresults}
 The final deep network has a window size of 13 and 6 hidden layers of size 26.
 When training the final network we observed that an increase in training time significantly improved the results. 
 We trained with 25, 50, and 100 iterations over the entire training set, achieving 52.26\%, 52.4\%, and 53.21\% accuracy respectively.
@@ -231,7 +232,7 @@ Instead, we chose to use a one-versus-all ROC curve, which shows the false posit
 \end{figure}
 
 Despite the fact that the accuracy is lower than the baseline, all three ROC curves in figure \ref{fig:roc} show that the deep network's performance is better than simply guessing.
-Also note that for predictions with high confidence, our network predicts the secondary structure well, particularily beta classifications.
+Also note that for predictions with high confidence, our network predicts the secondary structure well, particularly beta classifications.
 
 \subsection{Ensembles}
 A natural modification to improve performance is to use ensembles of networks.
@@ -254,28 +255,29 @@ We hypothesize that deep networks would also benefit from this technique, but le
 %best ensemble: 63
 %best avg: 3 networks 61.65
 
-\subsection{Final Comments on Stacked Autoencoders}
-As we mentioned in section \ref{subsec:verification}, too few iterations led to a significant decrease in performance.
-Due to the complexity of the data, our final deep network has not fully converged and that is why its accuracy is so much worse than the baseline.
+\section{Final Comments on Stacked Autoencoders}
+As we mentioned in section \ref{subsec:verification}, too few iterations led to a significant decrease in accuracy.
+This is reinforced by the results seen in section \ref{subsec:deepnetresults}, showing that increasing the number of iterations improved our deep network's performance.
+Thus, we believe our final deep network has not fully converged, which is one reason why its accuracy is so much worse than the baseline.
 We are confident that with significantly longer training time (on the order of weeks), the deep network would fully converge.
 
 We still believe that deep networks have the ability to solve the secondary structure problem, but due to the time complexity of learning an effective deep network, other learning methods may be more practical.
 
-\subsection{Lessons Learned}
+\section{Lessons Learned}
 In the process of working on this project, we learned that it is very difficult to understand the re-representations produced by the hidden layers of a large multi-layer network.
 The combination of a complicated network and little domain knowledge made it especially challenging to tell whether these re-representations were useful.
 We also learned that deep networks need to be tested very carefully, since they have so many interconnections and weights.
-Overall, we feel that this was a valuable experience, gaining experience in neural networks.
+Overall, we feel that this study was a valuable experience.
 
 \section{Future Work}
 We considered additional modifications to the basic algorithm that we were unable to test due to time constraints.
-We would have liked to experiment with additional functions for our hidden and output units, rather than only using a sigmoid.
-One interesting modification would be using a function that further encourages sparsity by using a penalty term \cite{ng}.
+We would have liked to experiment with additional activation functions for our hidden and output units, rather than only using a sigmoid.
+For example, it would be interesting to use a function that further encourages sparsity by using a penalty term \cite{Ng}.
 
 \section{Conclusion}
-We explored a deep network's ability to classsify secondary structures in proteins.
-We created a baseline of a standard single-hidden layer neural network for comparison.
-We did a parameter tuning study, and found that the best parameters for the deep network were a window size of 13 and 6 hidden layers with 26 units per layer, resulting in a final accuracy of 53.2\%.
+We explored a deep network's ability to classify secondary structures in proteins.
+We created a baseline of a standard single hidden layer neural network for comparison.
+We performed a parameter tuning study, and found that the best parameters for the deep network were a window size of 13 and 6 hidden layers with 26 units per layer, resulting in a final accuracy of 53.2\%.
 We found that our deep networks were unable to achieve the accuracy of a standard neural network.
 
 \begin{thebibliography}{9}
@@ -283,43 +285,43 @@ We found that our deep networks were unable to achieve the accuracy of a standar
 
 \bibitem{Hinton}
 G.E. Hinton and R. R. Salakhutdinov,
-   `` Reducing the dimensionality of data with neural networks"
+   ``Reducing the dimensionality of data with neural networks"
    in \emph{Science}, 2006.
 
 \bibitem{DSSP}
 Joosten RP, Te Beek TAH, Krieger E, Hekkelman ML, Hooft RWW, Schneider R, Sander C, Vriend G,
-   `` A series of PDB related databases for everyday needs"
+   ``A series of PDB related databases for everyday needs"
    in \emph{NAR}, 2010.
 
 \bibitem{DSSP2}
 Kabsch W, Sander C,
-   `` Dictionary of protein secondary structure: pattern recognition of hydrogen-bonded and geometrical features"
+   ``Dictionary of protein secondary structure: pattern recognition of hydrogen-bonded and geometrical features"
    in \emph{Biopolymers}, 1983.
 
 \bibitem{Ng}
 Andrew Ng,
-   `` CS294 Lecture notes: Sparse autoencoder"
+   ``CS294 Lecture notes: Sparse autoencoder"
    \textbf{www.stanford.edu/class/cs294a/}
    \textbf{sparseAutoencoder.pdf}
 
 \bibitem{Qian}
 Ning Qian and Terrence J. Sejnowski,
-  `` Predicting the secondary structure of globular proteins using neural network models"
+  ``Predicting the secondary structure of globular proteins using neural network models"
   in \emph{J. Mol. Bio.}, 1988.
 
 \bibitem{Rost}
 Burkhard Rost and Christ Sander,
-  `` Prediction of protein secondary structures at bettter than 70\% accuracy"
+  ``Prediction of protein secondary structures at bettter than 70\% accuracy"
   in \emph{J. Mol. Bio.}, 1993.
 
 \bibitem{Stolorz}
 Paul Stolorz, Alan Lapedes, and Yuan Xia,
-   `` Predicting protein secondary structure using neural net and statistical methods"
+   ``Predicting protein secondary structure using neural net and statistical methods"
    in \emph{J. Mol. Bio.}, 1992.
 
 \bibitem{uci}
    C.L. Blake and C.J. Merz,
-   `` UCI repository of machine learning databases"
+   ``UCI repository of machine learning databases"
    \textbf{http://archive.ics.uci.edu/ml/datasets/}
    \textbf{Molecular+Biology+}
    \textbf{(Protein+Secondary+Structure)}
