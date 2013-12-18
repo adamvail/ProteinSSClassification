@@ -7,13 +7,21 @@
 \begin{document}
 \maketitle
 
+\begin{abstract}
+Classifying the secondary structures of proteins is a well-known problem in molecular biology.
+Our goal is explore the potential of applying deep learning methods to this domain.
+We performed an empirical evaluation of deep network parameters on a network of stacked autoencoders.
+We found that our best performance of 53.2\% resulted from parameters of window size 13, 6 hidden layers, and 26 units per hidden layer.
+Unfortunately, this underperforms as compared to other learning methods.
+\end{abstract}
+
 \section{Introduction}
 \label{subsec:intro}
 Predicting the underlying 3D structure of a protein from its amino acid sequence is a significant problem in structural molecular biology.
 An important subproblem of this is to predict complex local structures, or secondary structures, from the amino acid sequence.  
 The secondary structure problem has been attacked in a variety of ways, including with x-ray crystallography, biophysical models, and machine learning models.
 
-Within in the field of machine learning, a variety of methods have been applied  over the past twenty years, with varying results. 
+Within in the field of machine learning, a variety of methods have been applied over the past twenty years, with varying results. 
 The majority of early work was done using standard neural networks with zero or one hidden layers resulting in the vast majority falling below 70\% accuracy.
 The recent rise in popularity in deep networks (i.e. neural networks with multiple hidden layers) led us to investigate their accuracy in this problem space.
 
@@ -231,7 +239,7 @@ However, we were able to train an ensemble of simple neural networks with one hi
 An ensemble of three neural networks has an average accuracy of 61.65\%.
 The best baseline neural network settings, as discussed in section \ref{subsec:bestbaseline},
 produced an average accuracy of 59.51\%, which is two percentage points lower than the ensemble.
-So, using an ensemble clearly improves the performance of the baseline network, and we hypothesize that deep networks would also benefit from this technique.
+So, using an ensemble clearly improves the performance of the baseline network, and we hypothesize that deep networks would also benefit from this technique, but leave it to future work.
 
 %\begin{figure}[ht!]
 %\centering
@@ -258,15 +266,15 @@ We also learned that deep networks need to be tested very carefully, since they 
 Overall, we feel that this was a valuable experience, gaining experience in neural networks.
 
 \section{Future Work}
-%TODO
-Ensembles of autoencoders
-Other things than sigmoid
-- sparse autoencoder 
+We considered additional modifications to the basic algorithm that we were unable to test due to time constraints.
+We would have liked to experiment with additional functions for our hidden and output units, rather than only using a sigmoid.
+One interesting modification would be using a function that further encourages sparsity by using a penalty term \cite{ng}.
 
 \section{Conclusion}
-%TODO
-
-%TODO Create Abstract
+We explored a deep network's ability to classsify secondary structures in proteins.
+We created a baseline of a standard single-hidden layer neural network for comparison.
+We did a parameter tuning study, and found that the best parameters for the deep network were a window size of 13 and 6 hidden layers with 26 units per layer, resulting in a final accuracy of 53.2\%.
+We found that our deep networks were unable to achieve the accuracy of a standard neural network.
 
 \begin{thebibliography}{9}
 
@@ -285,6 +293,12 @@ Joosten RP, Te Beek TAH, Krieger E, Hekkelman ML, Hooft RWW, Schneider R, Sander
 Kabsch W, Sander C,
    `` Dictionary of protein secondary structure: pattern recognition of hydrogen-bonded and geometrical features"
    in \emph{Biopolymers}, 1983.
+
+\bibitem{Ng}
+Andrew Ng,
+   `` CS294 Lecture notes: Sparse autoencoder"
+   \textbf{www.stanford.edu/class/cs294a/}
+   \textbf{sparseAutoencoder.pdf}
 
 \bibitem{Qian}
 Ning Qian and Terrence J. Sejnowski,
@@ -305,8 +319,8 @@ Paul Stolorz, Alan Lapedes, and Yuan Xia,
    C.L. Blake and C.J. Merz,
    `` UCI repository of machine learning databases"
    \textbf{http://archive.ics.uci.edu/ml/datasets/}
-   \textbf{Molecular+Biology+(Protein+}
-   \textbf{Secondary+Structure)}
+   \textbf{Molecular+Biology+\}
+   \textbf{(Protein+Secondary+Structure)}
 
 \end{thebibliography}
 
